@@ -243,4 +243,7 @@ Author
 
 Built with passion for IoT, automation, and intelligent habitat systems.
 
+Based on the original project: https://github.com/Gaesiii/Hermit-Home
+I contributed to the original repository and now continue development independently.
+
 <div align="center"> <img width="100%" src="https://capsule-render.vercel.app/api?type=waving&section=footer&height=120" /> </div>
