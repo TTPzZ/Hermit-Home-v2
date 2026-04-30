@@ -17,7 +17,7 @@ import {
   sanitizeRelayMap,
 } from '../../../lib/mistSafety';
 import { handleApiPreflight, methodNotAllowed } from '../../../lib/http';
-import { toUtc7Iso } from '../../../lib/timezone';
+import { toUtc7Iso, toVietnamDateTime } from '../../../lib/timezone';
 import { insertCommandPendingLogs, insertDiagnosticLog } from '../../../lib/diagnosticLogRepo';
 import {
   clearUserOverrideWindow,
@@ -47,6 +47,7 @@ type DeviceAlertDocument = {
   telemetry?: Record<string, unknown>;
   actions?: Record<string, unknown>;
   createdAt: Date;
+  createdAtVn?: string | null;
 };
 
 function readQueryValue(value: string | string[] | undefined): string | null {
@@ -215,6 +216,7 @@ function normalizeAlertDoc(doc: WithId<DeviceAlertDocument>) {
     telemetry: doc.telemetry ?? {},
     actions: doc.actions ?? {},
     createdAt: toUtc7Iso(doc.createdAt) ?? null,
+    createdAtVn: doc.createdAtVn ?? toVietnamDateTime(doc.createdAt),
   };
 }
 
@@ -253,6 +255,7 @@ async function handleControlGet(
       ...entry,
       _id: entry._id?.toString?.() ?? entry._id,
       createdAt: toUtc7Iso(entry.createdAt) ?? entry.createdAt,
+      createdAtVn: toVietnamDateTime(entry.createdAt),
     }));
     const { db } = await connectToDatabase();
     const latestDangerAlert = await db
@@ -638,6 +641,7 @@ async function handleAlertPost(
       ? (actionsRaw as Record<string, unknown>)
       : {};
 
+  const now = new Date();
   const document: DeviceAlertDocument = {
     deviceId,
     userId: req.user.userId,
@@ -650,7 +654,8 @@ async function handleAlertPost(
     danger_reasons: dangerReasons,
     telemetry,
     actions,
-    createdAt: new Date(),
+    createdAt: now,
+    createdAtVn: toVietnamDateTime(now),
   };
 
   try {
@@ -678,6 +683,7 @@ async function handleAlertPost(
       id: result.insertedId.toString(),
       deviceId,
       createdAt: toUtc7Iso(document.createdAt) ?? null,
+      createdAtVn: toVietnamDateTime(document.createdAt),
       notify_mobile: true,
     });
   } catch (error: unknown) {

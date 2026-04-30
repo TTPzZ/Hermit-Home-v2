@@ -1,7 +1,7 @@
 import { Db } from 'mongodb';
 import { DeviceMode, DeviceStatePatch, DeviceStateRecord, RelayState } from '@smart-terrarium/shared-types';
 import { sanitizeRelayMap } from './mistSafety';
-import { toUtc7Iso } from './timezone';
+import { toUtc7Iso, toVietnamDateTime } from './timezone';
 
 const COLLECTION_NAME = 'devices';
 
@@ -18,8 +18,11 @@ type DeviceDocument = {
   user_override?: boolean;
   relays?: Partial<RelayState>;
   lastTelemetryAt?: Date | string | null;
+  lastTelemetryAtVn?: string | null;
   lastCommandAt?: Date | string | null;
+  lastCommandAtVn?: string | null;
   updatedAt?: Date | string | null;
+  updatedAtVn?: string | null;
 };
 
 function toIsoString(value: Date | string | null | undefined): string | null {
@@ -62,8 +65,10 @@ export async function patchDeviceById(
   patch: DeviceStatePatch
 ): Promise<DeviceStateRecord> {
   const now = new Date();
+  const nowVn = toVietnamDateTime(now);
   const update: Record<string, unknown> = {
-    updatedAt: now
+    updatedAt: now,
+    updatedAtVn: nowVn,
   };
 
   if (patch.mode) {
@@ -84,7 +89,9 @@ export async function patchDeviceById(
   const setOnInsert: Record<string, unknown> = {
     deviceId,
     lastTelemetryAt: null,
-    lastCommandAt: null
+    lastTelemetryAtVn: null,
+    lastCommandAt: null,
+    lastCommandAtVn: null,
   };
 
   if (!('mode' in update)) {
@@ -124,9 +131,12 @@ export async function markCommandSent(
   patch: DeviceStatePatch
 ): Promise<void> {
   const now = new Date();
+  const nowVn = toVietnamDateTime(now);
   const update: Record<string, unknown> = {
     updatedAt: now,
-    lastCommandAt: now
+    updatedAtVn: nowVn,
+    lastCommandAt: now,
+    lastCommandAtVn: nowVn,
   };
 
   if (patch.mode) {
@@ -150,7 +160,8 @@ export async function markCommandSent(
       $set: update,
       $setOnInsert: {
         deviceId,
-        lastTelemetryAt: null
+        lastTelemetryAt: null,
+        lastTelemetryAtVn: null
       }
     },
     { upsert: true }

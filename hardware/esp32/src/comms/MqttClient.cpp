@@ -22,13 +22,38 @@ namespace {
 bool isAsciiWhitespace(char c) {
     return c == ' ' || c == '\t' || c == '\r' || c == '\n';
 }
+
+char toLowerAscii(char c) {
+    if (c >= 'A' && c <= 'Z') {
+        return static_cast<char>(c + ('a' - 'A'));
+    }
+    return c;
+}
+
+bool equalsIgnoreCaseAscii(const char* lhs, const char* rhs) {
+    if (lhs == nullptr || rhs == nullptr) {
+        return false;
+    }
+
+    while (*lhs != '\0' && *rhs != '\0') {
+        if (toLowerAscii(*lhs) != toLowerAscii(*rhs)) {
+            return false;
+        }
+        ++lhs;
+        ++rhs;
+    }
+
+    return *lhs == '\0' && *rhs == '\0';
+}
 }
 
 // ----------------------------------------------------------------
 // Constructor
 // ----------------------------------------------------------------
 MqttClient::MqttClient()
-    : _mqttClient(_espClient),
+    : _mqttClient(_secureClient),
+      _activeTransportClient(&_secureClient),
+      _useTls(true),
       callback(nullptr),
       _lastReconnectAttemptMs(0),
       _lastTimeSyncAttemptMs(0),
@@ -57,11 +82,18 @@ void MqttClient::setCallback(MQTT_CALLBACK_SIGNATURE) {
 void MqttClient::init() {
     // Skip TLS certificate verification — required for HiveMQ Cloud
     // on port 8883 without provisioning a CA bundle on the ESP32.
-    _espClient.setInsecure();
+    _useTls = _resolveTlsModeFromConfig();
+    if (_useTls) {
+        _secureClient.setInsecure();
+        _activeTransportClient = &_secureClient;
+    } else {
+        _activeTransportClient = &_plainClient;
+    }
 
     // Normalize MQTT_BROKER so accidental URL input still works:
     // e.g. https://cluster.hivemq.cloud:8883 -> cluster.hivemq.cloud + 8883
     _normalizeBrokerEndpoint();
+    _mqttClient.setClient(*_activeTransportClient);
     _mqttClient.setServer(_brokerHost, _brokerPort);
 
     // Register whatever callback was injected via setCallback().
@@ -85,7 +117,8 @@ void MqttClient::init() {
     );
 
     Serial.printf(
-        "[MQTT] Client configured - broker raw='%s' normalized='%s:%u' clientId='%s'\n",
+        "[MQTT] Client configured - protocol='%s' broker raw='%s' normalized='%s:%u' clientId='%s'\n",
+        _useTls ? "mqtts" : "mqtt",
         MQTT_BROKER,
         _brokerHost,
         static_cast<unsigned>(_brokerPort),
@@ -279,7 +312,7 @@ bool MqttClient::_reconnect() {
     }
 
     // For TLS MQTT, sync clock before handshake (needed on many brokers).
-    if (_brokerPort == 8883U && !_syncClockIfNeeded()) {
+    if (_useTls && !_syncClockIfNeeded()) {
         Serial.println(F("[MQTT] Reconnect delayed - clock not synced yet."));
         return false;
     }
@@ -297,15 +330,30 @@ bool MqttClient::_reconnect() {
     const char* clientId =
         (_runtimeClientId[0] != '\0') ? _runtimeClientId : MQTT_CLIENT_ID;
 
-    bool connected = _mqttClient.connect(
-        clientId,         // Runtime-unique client ID
-        MQTT_USER,        // HiveMQ username
-        MQTT_PASS,        // HiveMQ password
-        willTopic,        // LWT topic
-        willQos,          // LWT QoS
-        willRetain,       // LWT retained flag
-        willPayload       // LWT payload
-    );
+    const bool hasUsername = MQTT_USER[0] != '\0';
+    const bool hasPassword = MQTT_PASS[0] != '\0';
+    const bool useAuth = hasUsername || hasPassword;
+
+    bool connected = false;
+    if (useAuth) {
+        connected = _mqttClient.connect(
+            clientId,
+            MQTT_USER,
+            MQTT_PASS,
+            willTopic,
+            willQos,
+            willRetain,
+            willPayload
+        );
+    } else {
+        connected = _mqttClient.connect(
+            clientId,
+            willTopic,
+            willQos,
+            willRetain,
+            willPayload
+        );
+    }
 
     if (connected) {
         Serial.println(F("[MQTT] Connected successfully!"));
@@ -332,6 +380,33 @@ bool MqttClient::_reconnect() {
                   _mqttClient.state(),
                   static_cast<unsigned long>(INTERVAL_RECONNECT_MS));
     return false;
+}
+
+bool MqttClient::_resolveTlsModeFromConfig() const {
+    const char* raw = MQTT_PROTOCOL;
+    if (raw == nullptr) {
+        return MQTT_PORT == 8883U;
+    }
+
+    while (*raw != '\0' && isAsciiWhitespace(*raw)) {
+        ++raw;
+    }
+
+    if (*raw == '\0') {
+        return MQTT_PORT == 8883U;
+    }
+
+    if (equalsIgnoreCaseAscii(raw, "mqtts") ||
+        equalsIgnoreCaseAscii(raw, "tls") ||
+        equalsIgnoreCaseAscii(raw, "ssl")) {
+        return true;
+    }
+
+    if (equalsIgnoreCaseAscii(raw, "mqtt")) {
+        return false;
+    }
+
+    return MQTT_PORT == 8883U;
 }
 
 void MqttClient::_normalizeBrokerEndpoint() {

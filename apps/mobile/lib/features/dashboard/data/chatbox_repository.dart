@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../../../core/constants/app_constants.dart';
+import '../../../core/services/api_config.dart';
 import '../domain/chatbox_models.dart';
 
 class ChatboxRepository {
@@ -15,7 +16,7 @@ class ChatboxRepository {
     required String token,
   }) async {
     final uri = Uri.parse(
-      '${AppConstants.apiBaseUrl}${AppConstants.deviceChatboxEndpoint(userId)}',
+      '${ApiConfig.baseUrl}${AppConstants.deviceChatboxEndpoint(userId)}',
     );
 
     final response = await _client.get(
@@ -41,7 +42,7 @@ class ChatboxRepository {
     bool requestContext = false,
   }) async {
     final uri = Uri.parse(
-      '${AppConstants.apiBaseUrl}${AppConstants.deviceChatboxEndpoint(userId)}',
+      '${ApiConfig.baseUrl}${AppConstants.deviceChatboxEndpoint(userId)}',
     );
 
     final response = await _client

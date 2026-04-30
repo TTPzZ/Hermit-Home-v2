@@ -1,5 +1,4 @@
 export const VIETNAM_TIME_ZONE = 'Asia/Ho_Chi_Minh';
-const ISO_UTC7_OFFSET = '+07:00';
 
 type DateParts = {
   year: string;
@@ -20,19 +19,6 @@ const VIETNAM_PARTS_FORMATTER = new Intl.DateTimeFormat('en-GB', {
   second: '2-digit',
   hourCycle: 'h23',
 });
-
-function toDate(value: Date | string | number | null | undefined): Date | null {
-  if (value === null || value === undefined) {
-    return null;
-  }
-
-  const date = value instanceof Date ? value : new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return null;
-  }
-
-  return date;
-}
 
 function toVietnamParts(date: Date): DateParts | null {
   const partMap: Partial<Record<string, string>> = {};
@@ -59,27 +45,13 @@ function toVietnamParts(date: Date): DateParts | null {
   };
 }
 
-export function toUtc7Iso(
-  value: Date | string | number | null | undefined,
-): string | null {
-  const date = toDate(value);
-  if (!date) {
+export function toVietnamDateTime(value: Date | string | number | null | undefined): string | null {
+  if (value === null || value === undefined) {
     return null;
   }
 
-  const parts = toVietnamParts(date);
-  if (!parts) {
-    return null;
-  }
-
-  return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}${ISO_UTC7_OFFSET}`;
-}
-
-export function toVietnamDateTime(
-  value: Date | string | number | null | undefined,
-): string | null {
-  const date = toDate(value);
-  if (!date) {
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) {
     return null;
   }
 
@@ -90,3 +62,4 @@ export function toVietnamDateTime(
 
   return `${parts.day}/${parts.month}/${parts.year} ${parts.hour}:${parts.minute}:${parts.second}`;
 }
+

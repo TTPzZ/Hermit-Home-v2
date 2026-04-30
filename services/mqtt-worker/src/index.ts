@@ -17,6 +17,7 @@ const SELF_PING_USER_AGENT = 'mqtt-worker-self-keepalive/1.0';
 const AGENT_CONTROL_USER_AGENT = 'mqtt-worker-agent-control/1.0';
 const TELEMETRY_WILDCARD_TOPIC = 'terrarium/telemetry/+';
 const CONFIRM_WILDCARD_TOPIC = 'terrarium/confirm/+';
+type MqttProtocol = 'mqtt' | 'mqtts';
 
 function parsePositiveInteger(value: string | undefined, fallback: number): number {
   if (!value) {
@@ -72,25 +73,32 @@ function parseBooleanFlag(value: string | undefined): boolean {
   return normalized === '1' || normalized === 'true' || normalized === 'yes' || normalized === 'on';
 }
 
-function buildMqttOptions(): IClientOptions {
+function parseMqttProtocol(value: string | undefined): MqttProtocol {
+  if (!value) return 'mqtts';
+  return value.trim().toLowerCase() === 'mqtt' ? 'mqtt' : 'mqtts';
+}
+
+function buildMqttOptions(protocol: MqttProtocol): IClientOptions {
   const username = process.env.MQTT_USER || '';
   const password = process.env.MQTT_PASS || '';
   const caCert = process.env.MQTT_CA_CERT?.replace(/\\n/g, '\n');
 
-  if (!username || !password) {
-    throw new Error('Missing MQTT credentials. Check MQTT_USER and MQTT_PASS.');
-  }
-
   const options: IClientOptions = {
-    username,
-    password,
     clientId: `mqtt-worker-${Math.random().toString(16).slice(2, 10)}`,
-    rejectUnauthorized: true,
+    rejectUnauthorized: protocol === 'mqtts',
     reconnectPeriod: 2000,
     connectTimeout: 5000,
   };
 
-  if (caCert) {
+  if (username) {
+    options.username = username;
+  }
+
+  if (password) {
+    options.password = password;
+  }
+
+  if (protocol === 'mqtts' && caCert) {
     options.ca = caCert;
   }
 
@@ -100,8 +108,10 @@ function buildMqttOptions(): IClientOptions {
 async function bootstrap(): Promise<void> {
   await connectDB();
 
+  const protocol = parseMqttProtocol(process.env.MQTT_PROTOCOL);
   const host = process.env.MQTT_BROKER || '';
-  const port = Number.parseInt(process.env.MQTT_PORT || '8883', 10);
+  const defaultPort = protocol === 'mqtts' ? '8883' : '1883';
+  const port = Number.parseInt(process.env.MQTT_PORT || defaultPort, 10);
   if (!host) {
     throw new Error('Missing MQTT_BROKER environment variable.');
   }
@@ -127,7 +137,7 @@ async function bootstrap(): Promise<void> {
     effectiveAllowedDeviceIds.length > 0
       ? effectiveAllowedDeviceIds.map((deviceId) => `terrarium/confirm/${deviceId}`)
       : [CONFIRM_WILDCARD_TOPIC];
-  const brokerUrl = `mqtts://${host}:${port}`;
+  const brokerUrl = `${protocol}://${host}:${port}`;
 
   logger.info(
     {
@@ -141,7 +151,7 @@ async function bootstrap(): Promise<void> {
     'Connecting to MQTT broker'
   );
 
-  const mqttClient = mqtt.connect(brokerUrl, buildMqttOptions());
+  const mqttClient = mqtt.connect(brokerUrl, buildMqttOptions(protocol));
 
   mqttClient.on('connect', () => {
     const topicsToSubscribe = [...authorizedTopics, ...authorizedConfirmTopics];

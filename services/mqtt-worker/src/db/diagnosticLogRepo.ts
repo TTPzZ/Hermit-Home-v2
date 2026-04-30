@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { getDb } from './mongoClient';
+import { toVietnamDateTime } from '../utils/timezone';
 
 const COLLECTION_NAME = 'diagnostic_logs';
 const DEVICE_KEYS = ['heater', 'mist', 'fan', 'light'] as const;
@@ -20,10 +21,15 @@ type DiagnosticLogDocument = {
   commandRef?: string;
   metadata?: Record<string, unknown>;
   ackDeadlineAt?: Date;
+  ackDeadlineAtVn?: string | null;
   acknowledgedAt?: Date;
+  acknowledgedAtVn?: string | null;
   resolvedAt?: Date;
+  resolvedAtVn?: string | null;
   createdAt: Date;
+  createdAtVn?: string | null;
   updatedAt: Date;
+  updatedAtVn?: string | null;
 };
 
 function relayLabel(relay: DeviceKey): string {
@@ -44,8 +50,13 @@ export async function insertDiagnosticLog(
   const now = new Date();
   const document: DiagnosticLogDocument = {
     ...payload,
+    ackDeadlineAtVn: toVietnamDateTime(payload.ackDeadlineAt),
+    acknowledgedAtVn: toVietnamDateTime(payload.acknowledgedAt),
+    resolvedAtVn: toVietnamDateTime(payload.resolvedAt),
     createdAt: now,
+    createdAtVn: toVietnamDateTime(now),
     updatedAt: now,
+    updatedAtVn: toVietnamDateTime(now),
   };
 
   await getDb().collection<DiagnosticLogDocument>(COLLECTION_NAME).insertOne(document);
@@ -101,8 +112,11 @@ export async function acknowledgePendingCommand(params: {
         message: `[PASS] Command (${relayLabel(relay)}=${stateLabel(params.acknowledgedState)}) acknowledged by Edge Device.`,
         acknowledgedState: params.acknowledgedState,
         acknowledgedAt: now,
+        acknowledgedAtVn: toVietnamDateTime(now),
         resolvedAt: now,
+        resolvedAtVn: toVietnamDateTime(now),
         updatedAt: now,
+        updatedAtVn: toVietnamDateTime(now),
       },
     }
   );

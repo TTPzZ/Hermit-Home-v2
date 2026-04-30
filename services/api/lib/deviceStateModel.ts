@@ -17,6 +17,7 @@
 import { Collection, ObjectId } from 'mongodb';
 import { connectToDatabase } from './mongoClient';
 import { sanitizeRelayMap } from './mistSafety';
+import { toVietnamDateTime } from './timezone';
 
 // ─── Device vocabulary ────────────────────────────────────────────────────────
 //
@@ -87,6 +88,8 @@ export interface DeviceStateDocument {
   source:    StateSource;
   /** Server-assigned UTC timestamp — never trust client-supplied time. */
   createdAt: Date;
+  /** Human-readable Vietnam time for easier manual inspection in DB tools. */
+  createdAtVn?: string | null;
 }
 
 // ─── Collection accessor ──────────────────────────────────────────────────────
@@ -135,6 +138,7 @@ export async function insertDeviceState(
     source,
     createdAt: new Date(), // server-side timestamp — never from client body
   };
+  document.createdAtVn = toVietnamDateTime(document.createdAt);
 
   const result = await collection.insertOne(document);
   return result.insertedId.toString();

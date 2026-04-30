@@ -28,9 +28,9 @@
 #define PIN_LIGHT       17    // IN3 — Đèn chiếu sáng
 #define PIN_FAN         18    // IN4 — Quạt thông gió
 
-// Temporary lock for broken mist hardware.
-// Set to false after replacing the mist module/sensor.
-#define MIST_SAFETY_LOCK true
+// Mist safety lock.
+// false = mist follows control logic/override normally.
+#define MIST_SAFETY_LOCK false
 
 // Macro điều khiển relay — Active-HIGH
 #define RELAY_ON(pin)         digitalWrite(pin, HIGH)
@@ -43,10 +43,15 @@
 // ----------------------------------------------------------------
 //  CẤU HÌNH MQTT — HiveMQ Cloud (TLS port 8883)
 // ----------------------------------------------------------------
-#define MQTT_BROKER     "hermit-home-798c7baa.a01.euc1.aws.hivemq.cloud"
-#define MQTT_PORT       8883
-#define MQTT_USER       "admin"
-#define MQTT_PASS       "Admin1!@"
+// NOTE:
+// - Set MQTT_PROTOCOL to "mqtt" for plain TCP broker.
+// - Set MQTT_PROTOCOL to "mqtts" for TLS broker.
+// - MQTT_BROKER should be host or IP only (no http://, https://).
+#define MQTT_PROTOCOL   "mqtt"
+#define MQTT_BROKER     "192.168.2.78"
+#define MQTT_PORT       1883
+#define MQTT_USER       ""
+#define MQTT_PASS       ""
 #define MQTT_CLIENT_ID  "ESP32_Garden_Phuc_001"
 
 // IMPORTANT:

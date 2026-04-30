@@ -1,7 +1,7 @@
 import { Collection, MongoServerError, ObjectId } from 'mongodb';
 import bcrypt from 'bcryptjs';
 import { connectToDatabase } from './mongoClient';
-import { toUtc7Iso } from './timezone';
+import { toUtc7Iso, toVietnamDateTime } from './timezone';
 
 export interface UserDocument {
   _id?: ObjectId;
@@ -15,6 +15,7 @@ export type PublicUser = {
   _id?: ObjectId;
   email: string;
   createdAt: string | null;
+  createdAtVn?: string | null;
 };
 
 const USERS_COLLECTION_NAME = 'users';
@@ -43,7 +44,17 @@ function isUniqueEmailIndex(index: IndexLike): boolean {
 }
 
 async function ensureUsersIndexes(collection: Collection<UserDocument>): Promise<void> {
-  const existingIndexes = await collection.indexes();
+  let existingIndexes: IndexLike[] = [];
+  try {
+    existingIndexes = await collection.indexes();
+  } catch (error: unknown) {
+    if (!(error instanceof MongoServerError) || error.code !== 26) {
+      throw error;
+    }
+    // NamespaceNotFound means the collection does not exist yet.
+    // createIndex() below will create it automatically.
+    existingIndexes = [];
+  }
 
   const namedIndex = existingIndexes.find(
     (index) => index.name === EMAIL_UNIQUE_INDEX_NAME,
@@ -124,5 +135,6 @@ export function toPublicUser(user: UserDocument): PublicUser {
     _id: user._id,
     email: user.email,
     createdAt: toUtc7Iso(user.createdAt),
+    createdAtVn: toVietnamDateTime(user.createdAt),
   };
 }

@@ -105,7 +105,7 @@ const char kPortalHtml[] PROGMEM = R"html(
 
       <button type="submit">Luu va Ket Noi</button>
     </form>
-    <div class="hint">Mist dang bi khoa an toan (luon OFF).</div>
+    <div class="hint">Mist dang o che do dieu khien binh thuong.</div>
   </div>
 </body>
 </html>

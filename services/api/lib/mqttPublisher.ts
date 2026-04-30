@@ -5,21 +5,35 @@ import { sanitizeCommandPayload } from './mistSafety';
 
 dotenv.config();
 
+type MqttProtocol = 'mqtt' | 'mqtts';
+
+function parseMqttProtocol(raw: string | undefined): MqttProtocol {
+  if (!raw) return 'mqtts';
+  return raw.trim().toLowerCase() === 'mqtt' ? 'mqtt' : 'mqtts';
+}
+
 function buildMqttOptions(
+  protocol: MqttProtocol,
   username: string,
   password: string,
-  caCert: string | undefined
+  caCert: string | undefined,
 ): IClientOptions {
   const options: IClientOptions = {
-    username,
-    password,
     clientId: `api-publisher-${Math.random().toString(16).slice(2, 8)}`,
-    rejectUnauthorized: true,
+    rejectUnauthorized: protocol === 'mqtts',
     reconnectPeriod: 0,
     connectTimeout: 5000,
   };
 
-  if (caCert) {
+  if (username) {
+    options.username = username;
+  }
+
+  if (password) {
+    options.password = password;
+  }
+
+  if (protocol === 'mqtts' && caCert) {
     options.ca = caCert;
   }
 
@@ -27,19 +41,21 @@ function buildMqttOptions(
 }
 
 export async function publishCommand(deviceId: string, payload: CommandPayload): Promise<void> {
+  const protocol = parseMqttProtocol(process.env.MQTT_PROTOCOL);
   const host = process.env.MQTT_BROKER || '';
-  const port = process.env.MQTT_PORT || '8883';
+  const defaultPort = protocol === 'mqtts' ? '8883' : '1883';
+  const port = process.env.MQTT_PORT || defaultPort;
   const username = process.env.MQTT_USER || '';
   const password = process.env.MQTT_PASS || '';
   const caCert = process.env.MQTT_CA_CERT?.replace(/\\n/g, '\n');
 
-  if (!host || !username || !password) {
-    throw new Error('Missing MQTT configuration. Check MQTT_BROKER, MQTT_USER, and MQTT_PASS.');
+  if (!host) {
+    throw new Error('Missing MQTT configuration. Check MQTT_BROKER.');
   }
 
   const client = mqtt.connect(
-    `mqtts://${host}:${port}`,
-    buildMqttOptions(username, password, caCert)
+    `${protocol}://${host}:${port}`,
+    buildMqttOptions(protocol, username, password, caCert),
   );
 
   return new Promise((resolve, reject) => {

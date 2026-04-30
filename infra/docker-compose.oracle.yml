@@ -1,0 +1,122 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: hermit-home-mongo
+    restart: unless-stopped
+    ports:
+      - "${MONGO_PORT:-27017}:27017"
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGODB_DB_NAME:-hermit-home}
+    volumes:
+      - mongo_data:/data/db
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: hermit-home-mosquitto
+    restart: unless-stopped
+    ports:
+      - "${MQTT_PORT_HOST:-1883}:1883"
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_log:/mosquitto/log
+
+  api:
+    build:
+      context: ..
+      dockerfile: services/api/Dockerfile
+    container_name: hermit-home-api
+    restart: unless-stopped
+    depends_on:
+      - mongo
+      - mosquitto
+    ports:
+      - "${API_PORT_HOST:-3000}:3000"
+    environment:
+      MONGODB_URI: ${MONGODB_URI:-mongodb://mongo:27017}
+      MONGODB_DB_NAME: ${MONGODB_DB_NAME:-hermit-home}
+      MONGODB_MAX_POOL_SIZE: ${MONGODB_MAX_POOL_SIZE:-10}
+      TZ: ${TZ:-Asia/Ho_Chi_Minh}
+      MQTT_PROTOCOL: ${MQTT_PROTOCOL:-mqtt}
+      MQTT_BROKER: ${MQTT_BROKER:-mosquitto}
+      MQTT_PORT: ${MQTT_PORT:-1883}
+      MQTT_USER: ${MQTT_USER:-}
+      MQTT_PASS: ${MQTT_PASS:-}
+      MQTT_CA_CERT: ${MQTT_CA_CERT:-}
+      SERVICE_API_KEY: ${SERVICE_API_KEY}
+      JWT_SECRET: ${JWT_SECRET}
+      FIREBASE_SERVICE_ACCOUNT_KEY: ${FIREBASE_SERVICE_ACCOUNT_KEY:-}
+      PASSWORD_RESET_URL: ${PASSWORD_RESET_URL:-http://localhost:3000/reset-password}
+      PASSWORD_RESET_TOKEN_TTL_MINUTES: ${PASSWORD_RESET_TOKEN_TTL_MINUTES:-30}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+      EDGE_ACK_TIMEOUT_MS: ${EDGE_ACK_TIMEOUT_MS:-12000}
+      USER_OVERRIDE_GRACE_SECONDS: ${USER_OVERRIDE_GRACE_SECONDS:-300}
+      ALLOWED_DEVICE_IDS: ${ALLOWED_DEVICE_IDS:-}
+      AGENT_CONTROL_ENFORCE_ALLOWED_DEVICE_IDS: ${AGENT_CONTROL_ENFORCE_ALLOWED_DEVICE_IDS:-false}
+      AGENT_CONTROL_MAX_DEVICES: ${AGENT_CONTROL_MAX_DEVICES:-30}
+      AGENT_CONTROL_ACTIVE_WINDOW_SECONDS: ${AGENT_CONTROL_ACTIVE_WINDOW_SECONDS:-900}
+      AGENT_CONTROL_RECENT_WINDOW_SIZE: ${AGENT_CONTROL_RECENT_WINDOW_SIZE:-24}
+      AGENT_CONTROL_ALERTS_ENABLED: ${AGENT_CONTROL_ALERTS_ENABLED:-true}
+      AGENT_MIST_SAFETY_LOCK_ENABLED: ${AGENT_MIST_SAFETY_LOCK_ENABLED:-true}
+      AGENT_EMERGENCY_RELEASE_DELAY_MS: ${AGENT_EMERGENCY_RELEASE_DELAY_MS:-2000}
+      AGENT_TELEMETRY_CSV_PATH: ${AGENT_TELEMETRY_CSV_PATH:-exports/telemetry-export.csv}
+      AGENT_TELEMETRY_CSV_SAMPLE_SIZE: ${AGENT_TELEMETRY_CSV_SAMPLE_SIZE:-600}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_BASE_URL: ${OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1}
+      OPENROUTER_CHAT_MODEL: ${OPENROUTER_CHAT_MODEL:-google/gemma-4-26b-a4b-it:free}
+      OPENROUTER_CHAT_TEMPERATURE: ${OPENROUTER_CHAT_TEMPERATURE:-0.2}
+      OPENROUTER_CHAT_MAX_TOKENS: ${OPENROUTER_CHAT_MAX_TOKENS:-700}
+      CHATBOX_TELEMETRY_WINDOW_SIZE: ${CHATBOX_TELEMETRY_WINDOW_SIZE:-24}
+      CHATBOX_TELEMETRY_CSV_PATH: ${CHATBOX_TELEMETRY_CSV_PATH:-exports/telemetry-export.csv}
+      CHATBOX_TELEMETRY_CSV_SAMPLE_SIZE: ${CHATBOX_TELEMETRY_CSV_SAMPLE_SIZE:-400}
+      CHATBOX_MAX_HISTORY_TURNS: ${CHATBOX_MAX_HISTORY_TURNS:-8}
+      CHATBOX_MAX_SUGGESTIONS: ${CHATBOX_MAX_SUGGESTIONS:-5}
+
+  mqtt-worker:
+    build:
+      context: ..
+      dockerfile: services/mqtt-worker/Dockerfile
+    container_name: hermit-home-mqtt-worker
+    restart: unless-stopped
+    depends_on:
+      - mongo
+      - mosquitto
+      - api
+    ports:
+      - "${WORKER_PORT_HOST:-10000}:10000"
+    environment:
+      MONGODB_URI: ${MONGODB_URI:-mongodb://mongo:27017}
+      MONGODB_DB_NAME: ${MONGODB_DB_NAME:-hermit-home}
+      MONGODB_MAX_POOL_SIZE: ${MONGODB_MAX_POOL_SIZE:-10}
+      TZ: ${TZ:-Asia/Ho_Chi_Minh}
+      MQTT_PROTOCOL: ${MQTT_PROTOCOL:-mqtt}
+      MQTT_BROKER: ${MQTT_BROKER:-mosquitto}
+      MQTT_PORT: ${MQTT_PORT:-1883}
+      MQTT_USER: ${MQTT_USER:-}
+      MQTT_PASS: ${MQTT_PASS:-}
+      MQTT_CA_CERT: ${MQTT_CA_CERT:-}
+      SERVICE_API_KEY: ${SERVICE_API_KEY}
+      ALLOWED_DEVICE_IDS: ${ALLOWED_DEVICE_IDS:-}
+      ENFORCE_ALLOWED_DEVICE_IDS: ${ENFORCE_ALLOWED_DEVICE_IDS:-false}
+      PORT: 10000
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      SELF_PING_URL: ""
+      SELF_PING_INTERVAL_MS: ${SELF_PING_INTERVAL_MS:-180000}
+      SELF_PING_TIMEOUT_MS: ${SELF_PING_TIMEOUT_MS:-10000}
+      AGENT_CONTROL_ENABLED: ${AGENT_CONTROL_ENABLED:-false}
+      AGENT_CONTROL_URL: http://api:3000/api/agent/control/cycle
+      AGENT_CONTROL_METHOD: ${AGENT_CONTROL_METHOD:-POST}
+      AGENT_CONTROL_API_KEY: ${SERVICE_API_KEY}
+      AGENT_CONTROL_INTERVAL_MS: ${AGENT_CONTROL_INTERVAL_MS:-20000}
+      AGENT_CONTROL_TIMEOUT_MS: ${AGENT_CONTROL_TIMEOUT_MS:-8000}
+      AGENT_CONTROL_BODY_JSON: ${AGENT_CONTROL_BODY_JSON:-}
+
+volumes:
+  mongo_data:
+  mosquitto_data:
+  mosquitto_log:

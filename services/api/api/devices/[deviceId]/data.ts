@@ -3,7 +3,7 @@ import type { WithId } from 'mongodb';
 import { connectToDatabase } from '../../../lib/mongoClient';
 import { withAuth, type AuthenticatedRequest } from '../../../lib/authMiddleware';
 import { handleApiPreflight, methodNotAllowed } from '../../../lib/http';
-import { toUtc7Iso } from '../../../lib/timezone';
+import { toUtc7Iso, toVietnamDateTime } from '../../../lib/timezone';
 import { insertDiagnosticLog } from '../../../lib/diagnosticLogRepo';
 
 const OBJECT_ID_REGEX = /^[a-f\d]{24}$/i;
@@ -102,6 +102,7 @@ function normalizeTelemetry(doc: WithId<TelemetryDocument>) {
     id: doc._id.toString(),
     userId: doc.userId,
     timestamp: toUtc7Iso(doc.timestamp) ?? null,
+    timestampVn: toVietnamDateTime(doc.timestamp),
     temperature: doc.temperature,
     humidity: doc.humidity,
     lux: doc.lux,
@@ -152,6 +153,7 @@ async function handleLatest(
     const normalized = {
       ...latestDocument,
       timestamp: toUtc7Iso(latestDocument.timestamp as Date | string) ?? latestDocument.timestamp,
+      timestampVn: toVietnamDateTime(latestDocument.timestamp as Date | string),
     };
 
     await insertDiagnosticLog({

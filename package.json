@@ -2,7 +2,20 @@
   "name": "smart-terrarium-monorepo",
   "private": true,
   "scripts": {
-    "export:telemetry:csv": "node scripts/export-telemetry-csv.cjs"
+    "export:telemetry:csv": "node scripts/export-telemetry-csv.cjs",
+    "db:copy": "node scripts/mongo-copy-db.cjs",
+    "local:infra:up": "docker compose -f infra/docker-compose.yml up -d",
+    "local:infra:down": "docker compose -f infra/docker-compose.yml down",
+    "local:api:dev": "vercel dev --listen 3000 --local --yes",
+    "local:worker:dev": "npm --prefix services/mqtt-worker run dev",
+    "local:e2e": "node scripts/local-e2e.cjs",
+    "local:stack:up": "docker compose --env-file infra/oracle.env.local -f infra/docker-compose.oracle.yml up --build -d",
+    "local:stack:down": "docker compose --env-file infra/oracle.env.local -f infra/docker-compose.oracle.yml down",
+    "local:stack:logs": "docker compose --env-file infra/oracle.env.local -f infra/docker-compose.oracle.yml logs -f --tail=200",
+    "local:stack:e2e": "node scripts/local-e2e.cjs",
+    "oracle:stack:up": "docker compose --env-file infra/oracle.env -f infra/docker-compose.oracle.yml up --build -d",
+    "oracle:stack:down": "docker compose --env-file infra/oracle.env -f infra/docker-compose.oracle.yml down",
+    "oracle:stack:logs": "docker compose --env-file infra/oracle.env -f infra/docker-compose.oracle.yml logs -f --tail=200"
   },
   "packageManager": "npm@11.6.2",
   "workspaces": [

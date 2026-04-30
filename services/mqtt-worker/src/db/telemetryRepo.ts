@@ -1,17 +1,20 @@
 import { TelemetryPayload } from '@smart-terrarium/shared-types';
 import { getDb } from './mongoClient';
 import { logger } from '../utils/logger';
+import { toVietnamDateTime } from '../utils/timezone';
 
 const COLLECTION_NAME = 'telemetry';
 
 export async function insertTelemetry(userId: string, payload: TelemetryPayload): Promise<void> {
   try {
     const collection = getDb().collection(COLLECTION_NAME);
+    const now = new Date();
 
     // Persist only known keys to prevent operator/object injection.
     const document = {
       userId,
-      timestamp: new Date(),
+      timestamp: now,
+      timestampVn: toVietnamDateTime(now),
       temperature: payload.temperature,
       humidity: payload.humidity,
       lux: payload.lux,

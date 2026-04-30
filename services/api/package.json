@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "vercel dev"
+    "dev": "vercel dev --cwd ../.. --listen 3000 --local --yes"
   },
   "dependencies": {
     "@smart-terrarium/shared-types": "file:../../packages/shared-types",
@@ -23,6 +23,6 @@
     "@types/node": "^20.19.37",
     "@vercel/node": "^3.2.29",
     "typescript": "^5.4.5",
-    "vercel": "^33.6.2"
+    "vercel": "^52.2.1"
   }
 }

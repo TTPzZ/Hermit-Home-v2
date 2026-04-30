@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/services/auth_service.dart';
+import '../../../../core/services/api_config.dart';
 
 enum AppThemeMode { day, auto, night }
 
@@ -479,6 +480,102 @@ class _LoginScreenState extends State<LoginScreen>
         SnackBar(content: Text(message), backgroundColor: Colors.redAccent));
   }
 
+  String? _validateApiBaseUrl(String? rawValue) {
+    final value = rawValue?.trim() ?? '';
+    if (value.isEmpty) {
+      return 'Nhập API URL';
+    }
+
+    if (ApiConfig.tryNormalize(value) == null) {
+      return 'URL không hợp lệ';
+    }
+
+    return null;
+  }
+
+  Future<void> _showApiConfigDialog() async {
+    final formKey = GlobalKey<FormState>();
+    final controller = TextEditingController(text: ApiConfig.baseUrl);
+
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        final dialogNavigator = Navigator.of(dialogContext);
+        return AlertDialog(
+          title: const Text('Cấu hình backend'),
+          content: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Đang dùng: ${ApiConfig.baseUrl}',
+                  style: const TextStyle(fontSize: 12),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Mặc định: ${ApiConfig.defaultBaseUrl}',
+                  style: const TextStyle(fontSize: 12),
+                ),
+                const SizedBox(height: 14),
+                TextFormField(
+                  controller: controller,
+                  validator: _validateApiBaseUrl,
+                  decoration: const InputDecoration(
+                    labelText: 'API base URL',
+                    hintText: 'http://192.168.x.x:3000',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                await ApiConfig.resetToDefault();
+                if (!mounted) return;
+                dialogNavigator.pop();
+                setState(() {});
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content:
+                        Text('Đã về mặc định: ${ApiConfig.defaultBaseUrl}'),
+                  ),
+                );
+              },
+              child: const Text('Mặc định'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (!(formKey.currentState?.validate() ?? false)) {
+                  return;
+                }
+
+                final normalized = ApiConfig.tryNormalize(controller.text);
+                if (normalized == null) {
+                  return;
+                }
+
+                await ApiConfig.setBaseUrl(normalized);
+                if (!mounted) return;
+                dialogNavigator.pop();
+                setState(() {});
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Đã đổi backend: $normalized')),
+                );
+              },
+              child: const Text('Lưu'),
+            ),
+          ],
+        );
+      },
+    );
+
+    controller.dispose();
+  }
+
   String _getHeaderText() {
     if (_currentPage == 0) {
       return _currentResetToken == null
@@ -658,6 +755,53 @@ class _LoginScreenState extends State<LoginScreen>
                               color: textMain.withOpacity(0.8),
                               fontSize: 14,
                               letterSpacing: 1.1),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: InkWell(
+                        onTap: _showApiConfigDialog,
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                                color: textMain.withOpacity(0.18), width: 1),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.dns_rounded,
+                                  size: 14, color: textMain.withOpacity(0.85)),
+                              const SizedBox(width: 8),
+                              ConstrainedBox(
+                                constraints:
+                                    const BoxConstraints(maxWidth: 220),
+                                child: Text(
+                                  'Backend: ${ApiConfig.baseUrl}',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: textMain.withOpacity(0.9),
+                                    fontSize: 12.5,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Đổi',
+                                style: TextStyle(
+                                  color: accentColor,
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

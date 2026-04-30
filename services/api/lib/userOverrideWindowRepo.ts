@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { connectToDatabase } from './mongoClient';
+import { toVietnamDateTime } from './timezone';
 
 const COLLECTION_NAME = 'user_override_windows';
 const DEFAULT_USER_OVERRIDE_GRACE_SECONDS = 300;
@@ -12,12 +13,17 @@ export type UserOverrideWindowDocument = {
   userId: string;
   active: boolean;
   startedAt: Date;
+  startedAtVn?: string | null;
   expiresAt: Date;
+  expiresAtVn?: string | null;
   activatedBy: 'control' | 'override';
   clearedAt?: Date;
+  clearedAtVn?: string | null;
   clearReason?: string;
   createdAt: Date;
+  createdAtVn?: string | null;
   updatedAt: Date;
+  updatedAtVn?: string | null;
 };
 
 function clamp(value: number, min: number, max: number): number {
@@ -42,6 +48,8 @@ export async function startUserOverrideWindow(params: {
   const now = new Date();
   const graceSeconds = getUserOverrideGraceSeconds();
   const expiresAt = new Date(now.getTime() + graceSeconds * 1000);
+  const nowVn = toVietnamDateTime(now);
+  const expiresAtVn = toVietnamDateTime(expiresAt);
 
   await db.collection<UserOverrideWindowDocument>(COLLECTION_NAME).updateOne(
     { deviceId: params.deviceId },
@@ -51,16 +59,21 @@ export async function startUserOverrideWindow(params: {
         userId: params.userId,
         active: true,
         startedAt: now,
+        startedAtVn: nowVn,
         expiresAt,
+        expiresAtVn,
         activatedBy: params.activatedBy,
         updatedAt: now,
+        updatedAtVn: nowVn,
       },
       $unset: {
         clearedAt: '',
+        clearedAtVn: '',
         clearReason: '',
       },
       $setOnInsert: {
         createdAt: now,
+        createdAtVn: nowVn,
       },
     },
     { upsert: true },
@@ -71,10 +84,14 @@ export async function startUserOverrideWindow(params: {
     userId: params.userId,
     active: true,
     startedAt: now,
+    startedAtVn: nowVn,
     expiresAt,
+    expiresAtVn,
     activatedBy: params.activatedBy,
     createdAt: now,
+    createdAtVn: nowVn,
     updatedAt: now,
+    updatedAtVn: nowVn,
   };
 }
 
@@ -83,6 +100,7 @@ export async function getActiveUserOverrideWindow(
 ): Promise<UserOverrideWindowDocument | null> {
   const { db } = await connectToDatabase();
   const now = new Date();
+  const nowVn = toVietnamDateTime(now);
 
   const active = await db
     .collection<UserOverrideWindowDocument>(COLLECTION_NAME)
@@ -106,8 +124,10 @@ export async function getActiveUserOverrideWindow(
       $set: {
         active: false,
         clearedAt: now,
+        clearedAtVn: nowVn,
         clearReason: 'expired',
         updatedAt: now,
+        updatedAtVn: nowVn,
       },
     },
   );
@@ -121,6 +141,7 @@ export async function clearUserOverrideWindow(
 ): Promise<boolean> {
   const { db } = await connectToDatabase();
   const now = new Date();
+  const nowVn = toVietnamDateTime(now);
   const result = await db.collection<UserOverrideWindowDocument>(COLLECTION_NAME).updateOne(
     {
       deviceId,
@@ -130,8 +151,10 @@ export async function clearUserOverrideWindow(
       $set: {
         active: false,
         clearedAt: now,
+        clearedAtVn: nowVn,
         clearReason: reason.slice(0, 200),
         updatedAt: now,
+        updatedAtVn: nowVn,
       },
     },
   );

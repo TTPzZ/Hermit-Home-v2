@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { connectToDatabase } from './mongoClient';
+import { toVietnamDateTime } from './timezone';
 
 const COLLECTION_NAME = 'diagnostic_logs';
 const DEFAULT_ACK_TIMEOUT_MS = 12_000;
@@ -24,10 +25,15 @@ export type DiagnosticLogDocument = {
   commandRef?: string;
   metadata?: Record<string, unknown>;
   ackDeadlineAt?: Date;
+  ackDeadlineAtVn?: string | null;
   acknowledgedAt?: Date;
+  acknowledgedAtVn?: string | null;
   resolvedAt?: Date;
+  resolvedAtVn?: string | null;
   createdAt: Date;
+  createdAtVn?: string | null;
   updatedAt: Date;
+  updatedAtVn?: string | null;
 };
 
 function relayLabel(relay: DeviceKey): string {
@@ -58,8 +64,13 @@ export async function insertDiagnosticLog(
   const now = new Date();
   const doc: DiagnosticLogDocument = {
     ...payload,
+    ackDeadlineAtVn: toVietnamDateTime(payload.ackDeadlineAt),
+    acknowledgedAtVn: toVietnamDateTime(payload.acknowledgedAt),
+    resolvedAtVn: toVietnamDateTime(payload.resolvedAt),
     createdAt: now,
+    createdAtVn: toVietnamDateTime(now),
     updatedAt: now,
+    updatedAtVn: toVietnamDateTime(now),
   };
   await db.collection<DiagnosticLogDocument>(COLLECTION_NAME).insertOne(doc);
 }
@@ -95,8 +106,11 @@ export async function insertCommandPendingLogs(params: {
     commandRef,
     metadata: params.metadata,
     ackDeadlineAt,
+    ackDeadlineAtVn: toVietnamDateTime(ackDeadlineAt),
     createdAt: now,
+    createdAtVn: toVietnamDateTime(now),
     updatedAt: now,
+    updatedAtVn: toVietnamDateTime(now),
   }));
 
   if (docs.length > 0) {
@@ -133,7 +147,9 @@ export async function expireTimedOutPendingCommands(): Promise<number> {
             status: 'FAIL' as const,
             message: `[FAIL] Timeout: Command (${relayLabel(entry.relay!)}=${stateLabel(entry.expectedState!)}) reached API but was not acknowledged by Edge Device.`,
             resolvedAt: now,
+            resolvedAtVn: toVietnamDateTime(now),
             updatedAt: now,
+            updatedAtVn: toVietnamDateTime(now),
           },
         },
       },

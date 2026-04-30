@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../../../core/constants/app_constants.dart';
+import '../../../core/services/api_config.dart';
 import '../domain/device_control_state.dart';
 
 class DeviceControlRepository {
@@ -17,7 +18,7 @@ class DeviceControlRepository {
     int limit = 100,
   }) async {
     final uri = Uri.parse(
-      '${AppConstants.apiBaseUrl}/api/devices/$userId/action?type=control&limit=$limit',
+      '${ApiConfig.baseUrl}/api/devices/$userId/action?type=control&limit=$limit',
     );
 
     final response = await _client.get(
@@ -75,7 +76,7 @@ class DeviceControlRepository {
     required bool enabled,
   }) async {
     final uri = Uri.parse(
-      '${AppConstants.apiBaseUrl}/api/devices/$userId/action?type=control',
+      '${ApiConfig.baseUrl}/api/devices/$userId/action?type=control',
     );
     final body = jsonEncode({deviceKey: enabled});
 

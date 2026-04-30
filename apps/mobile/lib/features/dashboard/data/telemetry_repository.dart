@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../../../core/constants/app_constants.dart';
+import '../../../core/services/api_config.dart';
 import '../domain/telemetry_model.dart';
 
 class TelemetryRepository {
@@ -17,7 +18,7 @@ class TelemetryRepository {
     int limit = 30,
   }) async {
     final uri = Uri.parse(
-      '${AppConstants.apiBaseUrl}/api/devices/$userId/data?type=history&limit=$limit',
+      '${ApiConfig.baseUrl}/api/devices/$userId/data?type=history&limit=$limit',
     );
 
     final response = await _client.get(

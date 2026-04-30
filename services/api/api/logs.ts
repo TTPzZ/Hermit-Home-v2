@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { handleApiPreflight, methodNotAllowed } from '../lib/http';
 import { expireTimedOutPendingCommands, listDiagnosticLogs } from '../lib/diagnosticLogRepo';
-import { toUtc7Iso } from '../lib/timezone';
+import { toUtc7Iso, toVietnamDateTime } from '../lib/timezone';
 
 const ALLOWED_METHODS = ['GET'] as const;
 const OBJECT_ID_REGEX = /^[a-f\d]{24}$/i;
@@ -48,10 +48,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       commandRef: entry.commandRef ?? null,
       metadata: entry.metadata ?? {},
       ackDeadlineAt: toUtc7Iso(entry.ackDeadlineAt ?? null),
+      ackDeadlineAtVn: entry.ackDeadlineAtVn ?? toVietnamDateTime(entry.ackDeadlineAt ?? null),
       acknowledgedAt: toUtc7Iso(entry.acknowledgedAt ?? null),
+      acknowledgedAtVn: entry.acknowledgedAtVn ?? toVietnamDateTime(entry.acknowledgedAt ?? null),
       resolvedAt: toUtc7Iso(entry.resolvedAt ?? null),
+      resolvedAtVn: entry.resolvedAtVn ?? toVietnamDateTime(entry.resolvedAt ?? null),
       createdAt: toUtc7Iso(entry.createdAt) ?? null,
+      createdAtVn: entry.createdAtVn ?? toVietnamDateTime(entry.createdAt),
       updatedAt: toUtc7Iso(entry.updatedAt) ?? null,
+      updatedAtVn: entry.updatedAtVn ?? toVietnamDateTime(entry.updatedAt),
     }));
 
     res.status(200).json({

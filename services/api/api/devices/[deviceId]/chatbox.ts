@@ -6,7 +6,7 @@ import { connectToDatabase } from '../../../lib/mongoClient';
 import { withAuth, type AuthenticatedRequest } from '../../../lib/authMiddleware';
 import { handleApiPreflight, methodNotAllowed } from '../../../lib/http';
 import { insertDiagnosticLog } from '../../../lib/diagnosticLogRepo';
-import { toUtc7Iso } from '../../../lib/timezone';
+import { toUtc7Iso, toVietnamDateTime } from '../../../lib/timezone';
 
 const OBJECT_ID_REGEX = /^[a-f\d]{24}$/i;
 const ALLOWED_METHODS = ['GET', 'POST'] as const;
@@ -73,6 +73,7 @@ type CsvContext = {
 type TelemetrySummary = {
   latest: {
     timestamp: string | null;
+    timestampVn?: string | null;
     temperature: number | null;
     humidity: number | null;
     lux: number | null;
@@ -444,6 +445,7 @@ async function loadTelemetrySummary(db: Db, deviceId: string): Promise<Telemetry
   return {
     latest: {
       timestamp: toUtc7Iso(latest.timestamp) ?? null,
+      timestampVn: toVietnamDateTime(latest.timestamp),
       temperature: asNumber(latest.temperature),
       humidity: asNumber(latest.humidity),
       lux: asNumber(latest.lux),

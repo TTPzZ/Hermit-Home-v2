@@ -7,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 import '../constants/app_constants.dart';
+import 'api_config.dart';
 import '../models/auth_result.dart';
 
 class AuthService {
@@ -19,7 +20,7 @@ class AuthService {
     iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
   );
 
-  Uri _uri(String endpoint) => Uri.parse('${AppConstants.apiBaseUrl}$endpoint');
+  Uri _uri(String endpoint) => Uri.parse('${ApiConfig.baseUrl}$endpoint');
 
   Map<String, String> get _jsonHeaders => {
         HttpHeaders.contentTypeHeader: 'application/json',
@@ -55,8 +56,8 @@ class AuthService {
     }
 
     if (e is SocketException) {
-      return const AuthResult.failure(
-        'Cannot reach server. Check API_BASE_URL and network connection.',
+      return AuthResult.failure(
+        'Cannot reach server (${ApiConfig.baseUrl}). Check network/API URL.',
       );
     }
 

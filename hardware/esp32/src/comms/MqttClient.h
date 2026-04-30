@@ -1,9 +1,9 @@
 /**
  * ================================================================
  * @file    MqttClient.h
- * @brief   Secure MQTT client wrapper for the Smart Terrarium.
+ * @brief   MQTT client wrapper for the Smart Terrarium.
  *
- * Encapsulates WiFiClientSecure + PubSubClient behind a clean API.
+ * Encapsulates WiFiClient/WiFiClientSecure + PubSubClient behind a clean API.
  *
  * Design decisions carried over from the original sketch:
  * - espClient.setInsecure()  →  skips TLS cert verification
@@ -24,6 +24,8 @@
 #pragma once
 
 #include <Arduino.h>
+#include <Client.h>
+#include <WiFiClient.h>
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
@@ -153,8 +155,11 @@ public:
     bool isConnected();
 
 private:
-    WiFiClientSecure  _espClient;
+    WiFiClient        _plainClient;
+    WiFiClientSecure  _secureClient;
     PubSubClient      _mqttClient;
+    Client*           _activeTransportClient;
+    bool              _useTls;
 
     MQTT_CALLBACK_SIGNATURE;          // stores the injected callback ptr
 
@@ -176,6 +181,7 @@ private:
      * @return true on successful connect.
      */
     bool _reconnect();
+    bool _resolveTlsModeFromConfig() const;
     void _normalizeBrokerEndpoint();
     bool _syncClockIfNeeded();
 

@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 import '../../core/services/auth_service.dart';
-import '../../core/constants/app_constants.dart';
+import '../../core/services/api_config.dart';
 import 'data/chat_history_store.dart';
 import 'data/chatbox_repository.dart';
 import 'data/device_control_repository.dart';
@@ -202,7 +202,7 @@ class _DashboardScreenState extends State<DashboardScreen>
       if (token != null && storedUserId != null && storedUserId.isNotEmpty) {
         try {
           final telemetryUrl = Uri.parse(
-            '${AppConstants.apiBaseUrl}/api/devices/$storedUserId/telemetry?limit=1',
+            '${ApiConfig.baseUrl}/api/devices/$storedUserId/telemetry?limit=1',
           );
           final teleResponse = await http.get(telemetryUrl, headers: {
             'Authorization': 'Bearer $token',
@@ -334,7 +334,7 @@ class _DashboardScreenState extends State<DashboardScreen>
       }
 
       final telemetryUrl = Uri.parse(
-          '${AppConstants.apiBaseUrl}/api/devices/$userId/telemetry?limit=$_currentLimit');
+          '${ApiConfig.baseUrl}/api/devices/$userId/telemetry?limit=$_currentLimit');
       final teleResponse = await http.get(telemetryUrl, headers: {
         'Authorization': 'Bearer $token',
         'Accept': 'application/json',
@@ -1164,6 +1164,199 @@ class _DashboardScreenState extends State<DashboardScreen>
         });
   }
 
+  String? _validateApiBaseUrl(String? rawValue) {
+    final value = rawValue?.trim() ?? '';
+    if (value.isEmpty) {
+      return 'Vui lòng nhập API URL.';
+    }
+
+    if (ApiConfig.tryNormalize(value) == null) {
+      return 'URL không hợp lệ. Ví dụ: http://192.168.1.10:3000';
+    }
+
+    return null;
+  }
+
+  Future<void> _showApiServerDialog({
+    required Color textMain,
+    required Color accentColor,
+  }) async {
+    final formKey = GlobalKey<FormState>();
+    final controller = TextEditingController(text: ApiConfig.baseUrl);
+
+    await showDialog<void>(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.6),
+      builder: (dialogContext) {
+        final dialogNavigator = Navigator.of(dialogContext);
+        final t = _themeController.value;
+        final glassBg = Color.lerp(
+          Colors.white.withOpacity(0.15),
+          const Color(0xFF001A33).withOpacity(0.9),
+          t,
+        )!;
+        final glassBorder = Color.lerp(
+          Colors.white.withOpacity(0.5),
+          Colors.cyanAccent.withOpacity(0.3),
+          t,
+        )!;
+
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(28),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: glassBg,
+                  borderRadius: BorderRadius.circular(28),
+                  border: Border.all(color: glassBorder, width: 1.2),
+                ),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Cấu hình backend',
+                        style: TextStyle(
+                          color: textMain,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Đang dùng: ${ApiConfig.baseUrl}',
+                        style: TextStyle(
+                          color: textMain.withOpacity(0.75),
+                          fontSize: 12,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Mặc định: ${ApiConfig.defaultBaseUrl}',
+                        style: TextStyle(
+                          color: textMain.withOpacity(0.62),
+                          fontSize: 12,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: controller,
+                        style: TextStyle(color: textMain),
+                        validator: _validateApiBaseUrl,
+                        decoration: InputDecoration(
+                          labelText: 'API base URL',
+                          hintText: 'http://192.168.x.x:3000',
+                          labelStyle:
+                              TextStyle(color: textMain.withOpacity(0.8)),
+                          hintStyle:
+                              TextStyle(color: textMain.withOpacity(0.5)),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide(
+                              color: textMain.withOpacity(0.28),
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide:
+                                BorderSide(color: accentColor, width: 1.6),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide:
+                                const BorderSide(color: Colors.redAccent),
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide:
+                                const BorderSide(color: Colors.redAccent),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () async {
+                                await ApiConfig.resetToDefault();
+                                if (!mounted) return;
+                                dialogNavigator.pop();
+                                await _syncDataFromDatabase(
+                                    resetPagination: true);
+                                if (!mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Đã về mặc định: ${ApiConfig.defaultBaseUrl}',
+                                    ),
+                                  ),
+                                );
+                              },
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(
+                                    color: textMain.withOpacity(0.35)),
+                              ),
+                              child: const Text('Mặc định'),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                if (!(formKey.currentState?.validate() ??
+                                    false)) {
+                                  return;
+                                }
+
+                                final normalized =
+                                    ApiConfig.tryNormalize(controller.text);
+                                if (normalized == null) {
+                                  return;
+                                }
+
+                                await ApiConfig.setBaseUrl(normalized);
+                                if (!mounted) return;
+                                dialogNavigator.pop();
+                                await _syncDataFromDatabase(
+                                    resetPagination: true);
+                                if (!mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        'Đã đổi backend: $normalized'),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: accentColor,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: const Text('Lưu'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    controller.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -1878,17 +2071,16 @@ class _DashboardScreenState extends State<DashboardScreen>
                     Container(height: 1, color: textMain.withOpacity(0.2)),
                     const SizedBox(height: 30),
                     _buildProfileOption(
-                        Icons.settings_rounded, "Cài đặt hệ thống", textMain,
-                        () {
-                      _showGlassDialog(
-                          "Cài đặt hệ thống",
-                          Text(
-                              "Tính năng cài đặt thông số đang được nâng cấp. Pháp sư vui lòng chờ bản cập nhật tiếp theo nhé!",
-                              style: TextStyle(
-                                  color: textMain.withOpacity(0.8),
-                                  height: 1.5),
-                              textAlign: TextAlign.center));
-                    }),
+                      Icons.settings_rounded,
+                      "Cài đặt hệ thống",
+                      textMain,
+                      () {
+                        _showApiServerDialog(
+                          textMain: textMain,
+                          accentColor: accentColor,
+                        );
+                      },
+                    ),
                     const SizedBox(height: 15),
                     _buildProfileOption(Icons.notifications_rounded,
                         "Thông báo cảnh báo", textMain, () {
