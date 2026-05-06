@@ -45,7 +45,7 @@ Cơ chế này giúp hệ thống vừa linh hoạt cho người dùng, vừa du
         |                           |
         | MQTT Command Publish      | Telemetry Storage
         v                           ^
-      [HiveMQ Broker] <----- [MQTT Worker - Node.js]
+       [EMQX Broker] <----- [MQTT Worker - Node.js]
         ^
         | MQTT Telemetry/Confirm
         |
@@ -111,7 +111,7 @@ Cơ chế này giúp hệ thống vừa linh hoạt cho người dùng, vừa du
 | Nhóm | Công nghệ |
 |---|---|
 | Firmware | C++ (PlatformIO), ESP32, Arduino framework |
-| Giao tiếp thiết bị | MQTT over TLS (HiveMQ Cloud) |
+| Giao tiếp thiết bị | MQTT over TLS (EMQX Cloud) |
 | Backend API | Node.js + TypeScript + Vercel Serverless |
 | Worker nền | Node.js + TypeScript |
 | AI Service | Python (`requests`, `schedule`, `python-dotenv`) |

@@ -80,8 +80,8 @@ void MqttClient::setCallback(MQTT_CALLBACK_SIGNATURE) {
 // Public: init
 // ----------------------------------------------------------------
 void MqttClient::init() {
-    // Skip TLS certificate verification — required for HiveMQ Cloud
-    // on port 8883 without provisioning a CA bundle on the ESP32.
+    // Skip TLS certificate verification when using cloud MQTT TLS
+    // without provisioning a CA bundle on the ESP32.
     _useTls = _resolveTlsModeFromConfig();
     if (_useTls) {
         _secureClient.setInsecure();
@@ -91,7 +91,7 @@ void MqttClient::init() {
     }
 
     // Normalize MQTT_BROKER so accidental URL input still works:
-    // e.g. https://cluster.hivemq.cloud:8883 -> cluster.hivemq.cloud + 8883
+    // e.g. mqtts://cluster.example.com:8883 -> cluster.example.com + 8883
     _normalizeBrokerEndpoint();
     _mqttClient.setClient(*_activeTransportClient);
     _mqttClient.setServer(_brokerHost, _brokerPort);

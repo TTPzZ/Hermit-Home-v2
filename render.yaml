@@ -27,6 +27,8 @@ services:
         sync: false
       - key: ENFORCE_ALLOWED_DEVICE_IDS
         value: "false"
+      - key: MQTT_PROTOCOL
+        value: "mqtts"
       - key: MQTT_BROKER
         sync: false
       - key: MQTT_PORT

@@ -6,8 +6,8 @@
  * Encapsulates WiFiClient/WiFiClientSecure + PubSubClient behind a clean API.
  *
  * Design decisions carried over from the original sketch:
- * - espClient.setInsecure()  →  skips TLS cert verification
- * (HiveMQ Cloud on port 8883).
+ * - espClient.setInsecure()  -> skips TLS cert verification
+ *   for cloud MQTT brokers on port 8883.
  * - LWT "offline" message published on user-scoped confirm topic.
  * - Buffer size fixed at 512 bytes (matches original).
  * - Non-blocking reconnect gated by INTERVAL_RECONNECT_MS.
@@ -57,7 +57,7 @@ public:
     /**
      * @brief Configure the secure client and MQTT server.
      *
-     * Calls espClient.setInsecure(), sets the server/port from
+     * Selects WiFiClientSecure for TLS, sets the server/port from
      * config.h, registers the callback, and sets the buffer size.
      * Does NOT attempt a connection — that happens inside
      * maintainConnection() so it remains non-blocking.

@@ -38,12 +38,15 @@ AI agent values:
 
 MQTT worker values:
 
+- `MQTT_PROTOCOL=mqtts`
 - `MQTT_BROKER`
-- `MQTT_PORT`
+- `MQTT_PORT=8883`
 - `MQTT_USER`
 - `MQTT_PASS`
 - `ALLOWED_DEVICE_IDS` (optional)
 - `ENFORCE_ALLOWED_DEVICE_IDS=false` for dynamic onboarding flow
+
+For EMQX Cloud Serverless, copy the broker host from the deployment overview and keep it as a bare host value. Do not include `mqtts://`, `https://`, `/mqtt`, or a custom CNAME.
 
 Temporary bridge values (mqtt-worker -> Vercel trigger endpoint):
 
@@ -97,4 +100,5 @@ After deployment:
 - Agent runs but no device action:
   - Check `DEVICE_ID` mismatch or API route auth constraints.
 - MQTT publish fails:
-  - Verify broker credentials and TLS settings (`MQTT_CA_CERT` if required).
+  - Verify EMQX broker host, username/password, TLS port `8883`, and `MQTT_PROTOCOL=mqtts`.
+  - If EMQX reports SNI problems, make sure `MQTT_BROKER` is the original EMQX host, not an IP address or CNAME.

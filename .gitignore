@@ -32,6 +32,8 @@ __pycache__/
 # PlatformIO (Hardware)
 .pio/
 .vscode/
+hardware/esp32/include/config.h
+!hardware/esp32/include/config.example.h
 
 # OS metadata
 .DS_Store

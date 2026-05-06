@@ -7,6 +7,19 @@ Core responsibilities:
 - Expose `/ping` and `/` health endpoints.
 - Optionally trigger an external AI agent API in a fixed loop.
 
+## EMQX Cloud Serverless
+
+Use the same MQTT values in Vercel API and this worker:
+
+- `MQTT_PROTOCOL=mqtts`
+- `MQTT_BROKER=<host from EMQX deployment overview>`
+- `MQTT_PORT=8883`
+- `MQTT_USER=<EMQX client username>`
+- `MQTT_PASS=<EMQX client password>`
+- `MQTT_CA_CERT=` optional, usually empty on Node runtimes
+
+`MQTT_BROKER` must be the original EMQX host only. Do not include a protocol, path, IP address, or custom CNAME because EMQX Serverless uses TLS/SNI validation.
+
 ## Agent API Trigger Loop (Temporary Bridge)
 
 Use this when your agent is not running as a continuous worker yet, and needs periodic HTTP triggers.

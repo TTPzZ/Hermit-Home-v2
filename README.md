@@ -7,7 +7,7 @@
 <br/>
 
 <img src="https://img.shields.io/badge/ESP32-Edge%20Device-blue?style=for-the-badge" />
-<img src="https://img.shields.io/badge/MQTT-HiveMQ-green?style=for-the-badge" />
+<img src="https://img.shields.io/badge/MQTT-EMQX-green?style=for-the-badge" />
 <img src="https://img.shields.io/badge/API-Vercel-black?style=for-the-badge" />
 <img src="https://img.shields.io/badge/AI-Python-red?style=for-the-badge" />
 <img src="https://img.shields.io/badge/Mobile-Flutter-02569B?style=for-the-badge" />
@@ -75,7 +75,7 @@ System Architecture
                                                     │ MQTT
                                                     ▼
                                                ┌───────────┐
-                                               │  HiveMQ   │
+                                               │   EMQX    │
                                                └────┬──────┘
                                                     │
                                                     ▼
@@ -99,7 +99,7 @@ Tech Stack
 ```
 Layer	Technology
 Hardware	ESP32, DHT22, BH1750, Soil Moisture
-Messaging	MQTT, HiveMQ
+Messaging	MQTT, EMQX Cloud
 Backend	Node.js, TypeScript, Vercel
 Database	MongoDB Atlas
 AI	Python
@@ -136,7 +136,8 @@ Environment Variables
 services/api/.env and services/mqtt-worker/.env
 MONGODB_URI="mongodb+srv://<user>:<password>@cluster.mongodb.net/?retryWrites=true&w=majority"
 MONGODB_DB_NAME="hermit-home"
-MQTT_BROKER="<your-cluster>.hivemq.cloud"
+MQTT_PROTOCOL="mqtts"
+MQTT_BROKER="<your-emqx-serverless-host>"
 MQTT_PORT=8883
 MQTT_USER="<username>"
 MQTT_PASS="<password>"
