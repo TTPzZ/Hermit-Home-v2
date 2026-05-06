@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import type { WithId } from 'mongodb';
-import type { CommandPayload } from '@smart-terrarium/shared-types';
+import type { CommandPayload } from '../../../lib/sharedTypes';
 import { connectToDatabase } from '../../../lib/mongoClient';
 import { withAuth, type AuthenticatedRequest } from '../../../lib/authMiddleware';
 import {

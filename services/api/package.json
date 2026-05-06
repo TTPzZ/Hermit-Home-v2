@@ -6,7 +6,6 @@
     "dev": "vercel dev --cwd ../.. --listen 3000 --local --yes"
   },
   "dependencies": {
-    "@smart-terrarium/shared-types": "file:../../packages/shared-types",
     "@types/bcryptjs": "^2.4.6",
     "@types/nodemailer": "^8.0.0",
     "bcryptjs": "^3.0.3",
@@ -16,7 +15,8 @@
     "mongodb": "^6.5.0",
     "mqtt": "^5.5.5",
     "nodemailer": "^8.0.5",
-    "pino": "^8.20.0"
+    "pino": "^8.20.0",
+    "smart-terrarium-monorepo": "file:../.."
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",

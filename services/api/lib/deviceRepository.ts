@@ -1,5 +1,5 @@
 import { Db } from 'mongodb';
-import { DeviceMode, DeviceStatePatch, DeviceStateRecord, RelayState } from '@smart-terrarium/shared-types';
+import type { DeviceMode, DeviceStatePatch, DeviceStateRecord, RelayState } from './sharedTypes';
 import { sanitizeRelayMap } from './mistSafety';
 import { toUtc7Iso, toVietnamDateTime } from './timezone';
 

@@ -5,15 +5,10 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "strict": true,
-    "rootDir": ".", 
+    "rootDir": ".",
     "outDir": "dist",
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
-    "paths": {
-      // SỬA DÒNG NÀY: Trỏ vào dist thay vì src
-      "@smart-terrarium/shared-types": ["../../packages/shared-types/dist/index"]
-    }
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["api/**/*", "lib/**/*", "../lib/userModel.ts"]
+  "include": ["api/**/*", "lib/**/*", "types/**/*"]
 }

@@ -1,5 +1,5 @@
 import mqtt, { IClientOptions } from 'mqtt';
-import { CommandPayload } from '@smart-terrarium/shared-types';
+import type { CommandPayload } from './sharedTypes';
 import dotenv from 'dotenv';
 import { sanitizeCommandPayload } from './mistSafety';
 

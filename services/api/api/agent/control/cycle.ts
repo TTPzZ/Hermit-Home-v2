@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { promises as fs } from 'fs';
 import path from 'path';
 import type { Db } from 'mongodb';
-import type { CommandPayload, RelayState, ThresholdConfig } from '@smart-terrarium/shared-types';
+import type { CommandPayload, RelayState, ThresholdConfig } from '../../../lib/sharedTypes';
 import { withAuth, type AuthenticatedRequest } from '../../../lib/authMiddleware';
 import { connectToDatabase } from '../../../lib/mongoClient';
 import { publishCommand } from '../../../lib/mqttPublisher';

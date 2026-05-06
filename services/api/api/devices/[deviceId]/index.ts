@@ -1,5 +1,5 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { DeviceStatePatch } from '@smart-terrarium/shared-types';
+import type { DeviceStatePatch } from '../../../lib/sharedTypes';
 import { connectToDatabase } from '../../../lib/mongoClient';
 import { getDeviceById, patchDeviceById } from '../../../lib/deviceRepository';
 import { verifyAuth } from '../../../lib/authMiddleware';

@@ -1,4 +1,4 @@
-import { CommandPayload, DeviceStatePatch, RelayState } from '@smart-terrarium/shared-types';
+import type { CommandPayload, DeviceStatePatch, RelayState } from './sharedTypes';
 
 function parseBooleanFlag(raw: string | undefined, fallback: boolean): boolean {
   if (!raw) return fallback;
