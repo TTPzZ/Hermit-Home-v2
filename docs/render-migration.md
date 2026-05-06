@@ -51,7 +51,7 @@ For EMQX Cloud Serverless, copy the broker host from the deployment overview and
 Temporary bridge values (mqtt-worker -> Vercel trigger endpoint):
 
 - `AGENT_CONTROL_ENABLED=true`
-- `AGENT_CONTROL_URL=https://hermit-home.vercel.app/api/agent/control/cycle`
+- `AGENT_CONTROL_URL=https://hermithomev2.vercel.app/api/agent/control/cycle`
 - `AGENT_CONTROL_METHOD=POST`
 - `AGENT_CONTROL_API_KEY=<same value as SERVICE_API_KEY on Vercel>`
 - `AGENT_CONTROL_INTERVAL_MS=20000`

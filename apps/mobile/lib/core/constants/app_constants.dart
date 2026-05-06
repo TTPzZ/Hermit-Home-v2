@@ -5,7 +5,7 @@ class AppConstants {
   // flutter run --dart-define=API_BASE_URL=https://your-api-domain
   static const String apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://hermit-home.vercel.app',
+    defaultValue: 'https://hermithomev2.vercel.app',
   );
 
   static const String registerEndpoint = '/api/auth?action=register';

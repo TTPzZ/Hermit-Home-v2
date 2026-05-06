@@ -22,7 +22,7 @@ This Flutter app boots directly into a unified **User + Device API Test** screen
 2. Install packages:
    - `F:\Hermit-Home\.sdk\flutter\bin\flutter.bat pub get`
 3. Run on Chrome:
-   - `F:\Hermit-Home\.sdk\flutter\bin\flutter.bat run -d chrome --dart-define=API_BASE_URL=https://hermit-home.vercel.app`
+   - `F:\Hermit-Home\.sdk\flutter\bin\flutter.bat run -d chrome --dart-define=API_BASE_URL=https://hermithomev2.vercel.app`
 
 ## Usage Notes
 

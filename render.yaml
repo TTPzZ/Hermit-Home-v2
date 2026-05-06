@@ -48,7 +48,7 @@ services:
       - key: AGENT_CONTROL_ENABLED
         value: "false"
       - key: AGENT_CONTROL_URL
-        value: "https://hermit-home.vercel.app/api/agent/control/cycle"
+        value: "https://hermithomev2.vercel.app/api/agent/control/cycle"
       - key: AGENT_CONTROL_METHOD
         value: "POST"
       - key: AGENT_CONTROL_API_KEY
