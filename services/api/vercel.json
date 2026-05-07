@@ -26,6 +26,16 @@
   "rewrites": [
     { "source": "/reset-password", "destination": "/api/auth?action=reset-link" },
     { "source": "/reset-password/", "destination": "/api/auth?action=reset-link" },
+    { "source": "/api/users/register", "destination": "/api/auth?action=register" },
+    { "source": "/api/users/login", "destination": "/api/auth?action=login" },
+    { "source": "/api/users/forgot-password", "destination": "/api/auth?action=forgot-password" },
+    { "source": "/api/users/reset-password", "destination": "/api/auth?action=reset-password" },
+    { "source": "/api/users/password-reset", "destination": "/api/auth?action=password-reset" },
+    {
+      "source": "/api/users/validate-reset-token",
+      "destination": "/api/auth?action=validate-reset-token"
+    },
+    { "source": "/api/users/reset-password-link", "destination": "/api/auth?action=reset-link" },
     { "source": "/api/(.*)", "destination": "/api/$1" }
   ]
 }
