@@ -3,31 +3,36 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Hermit Home Beach</title>
+  <title>Hermit Home Beach - Eco Squad</title>
   <style>
     @import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&display=swap");
 
     :root {
-      /* Bảng màu pastel, tự nhiên hơn */
-      --sky-top: #52b8e6;
-      --sky-mid: #8dd0ed;
-      --sky-bottom: #ffe1b5;
-      --sea-deep: #146191;
-      --sea-mid: #2b9ad4;
-      --sea-light: #70cfee;
-      --sand-main: #e6c58e;
-      --sand-wet: #ce9d5d;
-      --sand-dark: #b57a44;
-      --palm-trunk: #825032;
-      --palm-leaf: #329653;
-      --sun: #ffce54;
-      --crab: #e66245;
-      --crab-dark: #bf4024;
-      --shell: #966f51;
-      --shell-dark: #6e462d;
+      /* Bảng màu Kawaii Pastel Kẹo Ngọt */
+      --sky-top: #85d4f5;
+      --sky-mid: #b8e6fa;
+      --sky-bottom: #ffe4e1;
+      --sea-deep: #42b6f5;
+      --sea-mid: #6bd0ff;
+      --sea-light: #a3e4ff;
+      --sand-main: #ffe3a8;
+      --sand-wet: #f2c779;
+      --sand-dark: #e0ac4a;
+      --palm-trunk: #d1976b;
+      --palm-leaf: #59cc76;
+      --palm-leaf-dark: #46a35e;
+      --sun: #ffeb85;
+      
+      /* Cua Cute */
+      --crab-cute: #ff8566;
+      --crab-cute-dark: #e65c39;
+      --shell-cute: #ffd194;
+      --shell-cute-dark: #e6a863;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     html, body {
       margin: 0;
@@ -36,7 +41,7 @@
 
     body {
       overflow: hidden;
-      font-family: "Baloo 2", "Trebuchet MS", sans-serif;
+      font-family: "Baloo 2", sans-serif;
       background: var(--sky-mid);
       color: #0b415e;
     }
@@ -48,50 +53,52 @@
       min-height: 620px;
       overflow: hidden;
       isolation: isolate;
-      /* Đã bỏ animation camera-breathe vì gây tốn GPU quá mức */
     }
 
+    /* ====== BẦU TRỜI ====== */
     .sky {
       position: absolute;
       inset: 0;
-      background:
-        radial-gradient(circle at 78% 12%, #fff4c260 0 12%, #0000 24%),
-        linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 36%, var(--sky-bottom) 62%);
+      background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 40%, var(--sky-bottom) 80%);
     }
 
     .sky::before {
       content: "";
       position: absolute;
       inset: 0;
-      background:
-        radial-gradient(circle at 12% 24%, #ffffff40 0 6%, #0000 24%),
-        radial-gradient(circle at 85% 34%, #ffffff20 0 5%, #0000 18%);
-      mix-blend-mode: screen;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.4) 0, rgba(255, 255, 255, 0) 15%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.2) 0, rgba(255, 255, 255, 0) 10%);
+      mix-blend-mode: overlay;
       opacity: 0.8;
-      animation: haze-drift 28s linear infinite alternate;
+      animation: haze-drift 20s linear infinite alternate;
     }
 
+    /* ====== MẶT TRỜI KUTE ====== */
     .sun {
       position: absolute;
       top: 8%;
-      right: 9%;
-      width: clamp(90px, 11vw, 140px);
+      right: 12%;
+      width: clamp(90px, 12vw, 130px);
       aspect-ratio: 1;
       border-radius: 50%;
-      background: radial-gradient(circle at 35% 30%, #fff8d6 0 20%, var(--sun) 50%, #fabb3c 100%);
-      border: 2px solid #ffe9b8;
+      background: var(--sun);
+      border: 4px solid #fff3b0;
+      box-shadow: 0 0 20px rgba(255, 235, 133, 0.8);
+      animation: sun-bob-cute 4s ease-in-out infinite alternate;
+      z-index: 2;
     }
 
-    /* Đổi từ box-shadow sang thẻ giả + transform scale để dứt điểm lag */
-    .sun::before {
+    .sun::after {
       content: "";
       position: absolute;
-      inset: -20px;
+      inset: -25px;
       border-radius: 50%;
-      background: #ffd15b55;
-      z-index: -1;
-      filter: blur(8px);
-      animation: sun-glow 4s ease-in-out infinite alternate;
+      background: repeating-conic-gradient(from 0deg, rgba(255, 235, 133, 0) 0deg 20deg, rgba(255, 235, 133, 0.4) 20deg 40deg);
+      -webkit-mask-image: radial-gradient(circle, #000 40%, transparent 70%);
+      mask-image: radial-gradient(circle, #000 40%, transparent 70%);
+      z-index: -2;
+      animation: sun-ray-spin 20s linear infinite;
     }
 
     .sun-face {
@@ -103,203 +110,252 @@
 
     .sun-eye {
       position: absolute;
-      top: 42%;
-      width: 8px;
+      top: 40%;
+      width: 14px;
+      height: 18px;
+      border-radius: 50%;
+      background: #5c3e0a;
+      z-index: 1;
+      animation: eye-blink 5s infinite;
+    }
+
+    .sun-eye::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 4px;
+      width: 6px;
       height: 8px;
       border-radius: 50%;
-      background: #7a4f00;
+      background: #fff;
+    }
+
+    .sun-eye.left {
+      left: 24%;
+    }
+
+    .sun-eye.right {
+      right: 24%;
+    }
+
+    .sun-blush {
+      position: absolute;
+      top: 52%;
+      width: 18px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ff99a8;
+      opacity: 0.8;
       z-index: 1;
     }
 
-    .sun-eye.left { left: 34%; }
-    .sun-eye.right { right: 34%; }
+    .sun-blush.left {
+      left: 16%;
+    }
+
+    .sun-blush.right {
+      right: 16%;
+    }
 
     .sun-mouth {
       position: absolute;
-      top: 54%;
-      width: 28px;
-      height: 14px;
-      border-bottom: 3px solid #8f5d00;
-      border-radius: 0 0 20px 20px;
+      top: 55%;
+      width: 16px;
+      height: 10px;
+      border-bottom: 4px solid #5c3e0a;
+      border-radius: 0 0 16px 16px;
       z-index: 1;
     }
 
+    /* ====== MÂY BÉO ====== */
     .cloud {
       position: absolute;
-      width: clamp(120px, 18vw, 220px);
-      height: clamp(44px, 6vw, 78px);
+      width: clamp(100px, 16vw, 180px);
+      height: clamp(40px, 5vw, 60px);
       border-radius: 999px;
-      background: #ffffffeb;
-      filter: drop-shadow(0 8px 12px #49a2cf1a);
+      background: #ffffff;
+      filter: drop-shadow(0 6px 0 rgba(255, 228, 225, 0.6));
       animation: cloud-drift linear infinite;
       will-change: transform;
     }
 
-    .cloud::before, .cloud::after {
+    .cloud::before, 
+    .cloud::after {
       content: "";
       position: absolute;
-      border-radius: 999px;
-      background: inherit;
+      border-radius: 50%;
+      background: #ffffff;
     }
 
     .cloud::before {
-      width: 38%; height: 95%;
-      left: 13%; top: -45%;
+      width: 60%;
+      height: 140%;
+      left: 15%;
+      top: -60%;
     }
 
     .cloud::after {
-      width: 34%; height: 80%;
-      right: 10%; top: -35%;
+      width: 45%;
+      height: 110%;
+      right: 15%;
+      top: -40%;
     }
 
-    .cloud.one { top: 11%; left: -20%; animation-duration: 45s; }
-    .cloud.two { top: 23%; left: -25%; scale: 0.8; animation-duration: 60s; animation-delay: -12s; opacity: 0.9; }
-    .cloud.three { top: 6%; left: -22%; scale: 0.65; animation-duration: 75s; animation-delay: -24s; opacity: 0.8; }
+    .cloud.one {
+      top: 12%;
+      left: -20%;
+      animation-duration: 40s;
+    }
 
+    .cloud.two {
+      top: 26%;
+      left: -25%;
+      scale: 0.8;
+      animation-duration: 55s;
+      animation-delay: -10s;
+    }
+
+    .cloud.three {
+      top: 6%;
+      left: -22%;
+      scale: 0.6;
+      animation-duration: 70s;
+      animation-delay: -20s;
+      z-index: 1;
+    }
+
+    /* ====== BIỂN & CÁT MŨM MĨM ====== */
     .sea {
       position: absolute;
       top: 42%;
-      left: -3%;
-      width: 106%;
+      left: 0;
+      width: 100%;
       height: 21%;
-      background:
-        linear-gradient(180deg, #8ce6ff40 0 8%, #0000 16%),
-        linear-gradient(180deg, var(--sea-light) 0%, var(--sea-mid) 46%, var(--sea-deep) 100%);
-      border-top: 2px solid #b8f5ff;
+      background: linear-gradient(180deg, var(--sea-deep) 0%, var(--sea-mid) 40%, var(--sea-light) 100%);
+      border-top: 4px solid #fff;
       overflow: hidden;
-    }
-
-    .sea::before, .sea::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-repeat: repeat-x;
-      opacity: 0.3;
-    }
-
-    .sea::before {
-      top: 18%;
-      background-image: radial-gradient(circle at 20px -3px, #ffffffcc 0 22px, #0000 24px);
-      background-size: 64px 26px;
-      animation: wave-shift 6s linear infinite;
-      will-change: background-position;
-    }
-
-    .sea::after {
-      top: 56%;
-      background-image: radial-gradient(circle at 16px -3px, #ffffff99 0 15px, #0000 16px);
-      background-size: 46px 20px;
-      animation: wave-shift 9s linear infinite reverse;
-      will-change: background-position;
-    }
-
-    .horizon-haze {
-      position: absolute;
-      top: 39%;
-      left: -5%;
-      width: 110%;
-      height: 8%;
-      background: linear-gradient(180deg, #a4e5ff66 0%, #d7f6ff44 45%, #0000 100%);
-      filter: blur(3px);
-      pointer-events: none;
       z-index: 1;
+    }
+
+    .wave {
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 200%;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 120' preserveAspectRatio='none'%3E%3Cpath d='M0,50 Q100,100 200,50 T400,50 T600,50 T800,50 L800,120 L0,120 Z' fill='%23ffffff'/%3E%3C/svg%3E");
+      background-repeat: repeat-x;
+      will-change: transform;
+    }
+
+    .wave.wave-bg {
+      height: 100%;
+      background-size: 50% 100%;
+      opacity: 0.2;
+      animation: wave-pan 12s linear infinite;
+    }
+
+    .wave.wave-mid {
+      height: 70%;
+      background-size: 33% 100%;
+      opacity: 0.3;
+      animation: wave-pan-reverse 9s linear infinite;
+    }
+
+    .wave.wave-front {
+      height: 40%;
+      background-size: 25% 100%;
+      opacity: 0.4;
+      animation: wave-pan 6s linear infinite;
     }
 
     .sand {
       position: absolute;
       top: 60%;
-      left: 0; right: 0; bottom: 0;
-      background: linear-gradient(180deg, #f0d59e 0%, var(--sand-main) 30%, var(--sand-wet) 70%, var(--sand-dark) 100%);
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(180deg, var(--sand-main) 0%, var(--sand-wet) 60%, var(--sand-dark) 100%);
     }
 
-    .sand::before {
-      content: "";
+    .sand-wash-wrap {
       position: absolute;
-      inset: 0;
-      background-image:
-        radial-gradient(circle at 8px 8px, #ffffff1a 0 1.2px, #0000 1.5px),
-        radial-gradient(circle at 12px 14px, #6e411b14 0 1.2px, #0000 1.3px);
-      background-size: 26px 26px;
-      opacity: 0.5;
+      top: -14px;
+      left: 0;
+      right: 0;
+      height: 35px;
+      animation: wash-breathe 3s ease-in-out infinite alternate;
+      transform-origin: top;
+      z-index: 1;
     }
 
-    .sand::after {
-      content: "";
+    .sand-wash {
       position: absolute;
-      top: -18px;
-      left: -5%;
-      width: 110%;
-      height: 28px;
-      background: radial-gradient(circle at 16px 4px, #ffffffb3 0 12px, #0000 13px);
-      background-size: 54px 20px;
-      opacity: 0.7;
-      animation: shore-foam 7s linear infinite;
-      will-change: background-position;
+      top: 0;
+      left: 0;
+      width: 200%;
+      height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 60' preserveAspectRatio='none'%3E%3Cpath d='M0,20 Q100,50 200,20 T400,20 T600,20 T800,20 L800,0 L0,0 Z' fill='%23ffffff'/%3E%3C/svg%3E");
+      background-size: 33% 100%;
+      opacity: 0.9;
+      animation: wave-pan 10s linear infinite;
+      will-change: transform;
     }
 
+    /* ====== BẢNG TIÊU ĐỀ & CONSOLE ====== */
     .title-card {
       position: absolute;
-      top: clamp(14px, 3vw, 24px);
+      top: clamp(16px, 3vw, 24px);
       left: clamp(16px, 4vw, 40px);
-      z-index: 3;
-      padding: 10px 16px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(4px);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      box-shadow: 0 8px 20px rgba(13, 79, 115, 0.1);
+      z-index: 10;
+      padding: 12px 20px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 4px solid #b8e6fa;
+      box-shadow: 0 8px 0 rgba(184, 230, 250, 0.5);
     }
 
     .title-card h1 {
       margin: 0;
-      font-size: clamp(1.1rem, 2.9vw, 1.6rem);
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
       line-height: 1.1;
-      letter-spacing: 0.01em;
+      color: #ff85a1;
     }
 
     .title-card p {
       margin: 4px 0 0;
-      font-size: clamp(0.8rem, 2vw, 0.95rem);
-      color: #3b6b85;
+      font-size: clamp(0.85rem, 2vw, 1rem);
+      color: #5bc0eb;
+      font-weight: 600;
     }
 
     .title-row {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 16px;
     }
 
     .console-toggle {
-      width: 32px; height: 32px;
+      width: 40px;
+      height: 40px;
       border: 0;
-      border-radius: 8px;
-      background: #0d4f73;
+      border-radius: 50%;
+      background: #ff85a1;
       color: #fff;
-      font-size: 16px;
+      font-size: 20px;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(13, 79, 115, 0.25);
-      transition: all 0.2s ease;
+      box-shadow: 0 4px 0 #e66785;
+      transition: transform 0.1s;
     }
 
-    .console-toggle:hover {
-      transform: translateY(-2px);
-      background: #11628f;
-      box-shadow: 0 6px 14px rgba(13, 79, 115, 0.35);
-    }
-
-    .console-toggle:active { transform: translateY(0); }
-
-    /* Đổi animation fail bớt gắt */
-    .console-toggle.has-fail {
-      background: #b5382f;
-      animation: pulse-fail 1.5s ease-in-out infinite alternate;
-    }
+    .console-toggle:hover { transform: translateY(2px); box-shadow: 0 2px 0 #e66785; }
+    .console-toggle:active { transform: translateY(4px); box-shadow: 0 0 0 #e66785; }
+    .console-toggle.has-fail { background: #ff5c5c; box-shadow: 0 4px 0 #cc3d3d; animation: pulse-fail 1s infinite alternate; }
 
     .console-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(4, 27, 43, 0.6);
-      backdrop-filter: blur(3px);
+      background: rgba(255, 228, 225, 0.8);
+      backdrop-filter: blur(4px);
       display: none;
       align-items: center;
       justify-content: center;
@@ -312,11 +368,11 @@
     .console-panel {
       width: min(940px, 96vw);
       max-height: 84vh;
-      background: linear-gradient(180deg, #092031 0%, #0d2d45 100%);
-      border-radius: 12px;
-      border: 1px solid rgba(86, 172, 214, 0.2);
-      color: #d1efff;
-      box-shadow: 0 20px 40px rgba(0, 14, 23, 0.6);
+      background: #fff;
+      border-radius: 24px;
+      border: 4px solid #ffb3c6;
+      color: #4a4a4a;
+      box-shadow: 0 16px 32px rgba(255, 179, 198, 0.4);
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -326,402 +382,589 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 16px;
-      border-bottom: 1px solid rgba(76, 164, 207, 0.2);
-      background: #0e324c;
-      gap: 12px;
+      padding: 16px 20px;
+      border-bottom: 4px solid #ffb3c6;
+      background: #ffe4e1;
+      gap: 16px;
     }
 
-    .console-title { font-weight: 700; font-size: 1rem; }
-    .console-subtitle { font-size: 0.8rem; color: #8ec7e1; margin-top: 2px; }
-
-    .console-actions { display: flex; gap: 8px; }
+    .console-title { font-weight: 700; font-size: 1.1rem; color: #ff6b8b; }
+    .console-subtitle { font-size: 0.85rem; color: #ff99a8; margin-top: 2px; font-weight: 600; }
+    .console-actions { display: flex; gap: 10px; }
 
     .console-btn {
-      border: 1px solid rgba(91, 177, 210, 0.3);
-      border-radius: 6px;
-      background: #154363;
-      color: #fff;
-      padding: 6px 12px;
-      font-size: 0.8rem;
+      border: 0;
+      border-radius: 12px;
+      background: #a3e4ff;
+      color: #0b415e;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      font-weight: 700;
       cursor: pointer;
-      transition: background 0.15s;
+      box-shadow: 0 4px 0 #6bd0ff;
+      transition: transform 0.1s;
     }
 
-    .console-btn:hover { background: #1c5882; }
+    .console-btn:hover { transform: translateY(2px); box-shadow: 0 2px 0 #6bd0ff; }
 
     .console-status {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      padding: 10px 16px;
-      background: #0b2942;
-      border-bottom: 1px solid rgba(76, 164, 207, 0.1);
-      font-size: 0.78rem;
+      gap: 10px;
+      padding: 12px 20px;
+      background: #fff;
+      border-bottom: 4px solid #ffe4e1;
+      font-size: 0.85rem;
     }
 
-    .status-chip {
-      padding: 3px 10px;
-      border-radius: 999px;
-      background: #1c4b69;
-      color: #e4f4ff;
-      border: 1px solid rgba(105, 187, 221, 0.2);
-    }
-
-    .status-chip.pass { background: #1f5731; border-color: rgba(141, 241, 175, 0.3); color: #c4f7d5; }
-    .status-chip.fail { background: #732828; border-color: rgba(241, 138, 138, 0.3); color: #ffdcdc; }
+    .status-chip { padding: 4px 14px; border-radius: 999px; background: #eee; color: #666; font-weight: 700; }
+    .status-chip.pass { background: #d4edda; color: #28a745; }
+    .status-chip.fail { background: #f8d7da; color: #dc3545; }
 
     .console-log-list {
-      margin: 0; padding: 0;
+      margin: 0;
+      padding: 0;
       list-style: none;
       overflow-y: auto;
       max-height: 60vh;
-      font-family: "Consolas", "Courier New", monospace;
-      font-size: 0.82rem;
-      background: #071c2b;
+      font-family: "Consolas", monospace;
+      font-size: 0.9rem;
+      background: #fff;
     }
 
     .console-log-item {
       display: grid;
-      grid-template-columns: 70px 60px 85px 1fr;
-      gap: 10px;
+      grid-template-columns: 80px 70px 90px 1fr;
+      gap: 12px;
       align-items: start;
-      border-bottom: 1px solid rgba(39, 81, 107, 0.2);
-      padding: 10px 16px;
-      line-height: 1.4;
+      border-bottom: 2px dashed #ffe4e1;
+      padding: 12px 20px;
     }
 
-    .log-time { color: #7abfe0; }
+    .log-time { color: #ff99a8; font-weight: 600; }
     .log-status { font-weight: 700; }
-    .log-status.PASS { color: #6be399; }
-    .log-status.FAIL { color: #ff9191; }
-    .log-status.PENDING { color: #ffd678; }
-    .log-status.INFO { color: #8ad2f5; }
-    .log-source { color: #97cbe8; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em; }
-    .log-message { color: #e6f4fc; word-break: break-word; }
+    .log-status.PASS { color: #28a745; }
+    .log-status.FAIL { color: #dc3545; }
+    .log-status.PENDING { color: #ffc107; }
+    .log-status.INFO { color: #17a2b8; }
+    .log-source { color: #a3e4ff; text-transform: uppercase; font-weight: 700; }
+    .log-message { color: #555; word-break: break-word; }
+    .console-empty { padding: 20px; color: #ff99a8; font-family: "Consolas", monospace; font-size: 1rem; text-align: center; font-weight: 700; }
 
-    .console-empty { padding: 16px; color: #8cbdd6; font-family: "Consolas", monospace; font-size: 0.85rem; }
 
-    .decor-layer, .item-layer, .crab-layer, .sparkle-layer {
-      position: absolute; inset: 0; pointer-events: none;
-    }
+    /* ====== LAYER ĐÃ ĐƯỢC QUY HOẠCH LẠI ====== */
+    .decor-layer { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+    .bin-layer { position: absolute; inset: 0; pointer-events: none; z-index: 3; }
+    .item-layer { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
+    .crab-layer { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+    .sparkle-layer { position: absolute; inset: 0; pointer-events: none; z-index: 6; }
 
-    /* Đổi sang pure CSS config animation cho đốm sáng */
-    .sparkle {
+
+    /* ====== THÙNG RÁC CUTE ====== */
+    .trash-bin {
       position: absolute;
-      width: 4px; height: 4px;
-      border-radius: 50%;
-      background: #fff;
-      box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
-      animation: sparkle-float var(--dur) ease-in-out infinite alternate;
-      will-change: transform, opacity;
+      width: 54px;
+      height: 64px;
+      border-radius: 12px 12px 10px 10px;
+      border: 4px solid #fff;
+      box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 0 2px 0 rgba(0,0,0,0.2);
+      transform-origin: bottom center;
     }
 
-    .bird {
-      position: absolute;
-      width: 26px; height: 12px;
-      pointer-events: none;
-      animation: bird-fly linear infinite;
-      z-index: 2;
-    }
-
-    .bird::before, .bird::after {
+    .trash-bin::before {
       content: "";
-      position: absolute; top: 0;
-      width: 14px; height: 8px;
-      border-top: 2px solid #2e607d;
-      border-radius: 100% 100% 0 0;
-      transform-origin: center bottom;
-      animation: bird-wing 0.6s ease-in-out infinite alternate;
+      position: absolute;
+      top: -12px;
+      left: -4px;
+      right: -4px;
+      height: 14px;
+      background: inherit;
+      border-radius: 10px;
+      border: 4px solid #fff;
     }
 
-    .bird::before { left: 0; transform: rotate(10deg); }
-    .bird::after { right: 0; transform: rotate(-10deg); animation-delay: -0.3s; }
+    .trash-bin.pop {
+      animation: bin-swallow 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    .bin-organic { background: #59cc76; }
+    .bin-plastic { background: #6bd0ff; }
+    .bin-paper { background: #ffb3c6; }
 
-    .bird.one { left: -40px; top: 16%; animation-duration: 28s; }
-    .bird.two { left: -60px; top: 22%; scale: 0.8; opacity: 0.6; animation-duration: 35s; animation-delay: -10s; }
+    @keyframes bin-swallow {
+      0% { scale: 1; transform: translateY(0); }
+      50% { scale: 1.2; transform: translateY(-10px); }
+      100% { scale: 1; transform: translateY(0); }
+    }
 
+
+    /* ====== CÂY DỪA CUTE (LÁ RĂNG CƯA CHUẨN DỪA) ====== */
     .palm {
       position: absolute;
-      bottom: 15%;
-      width: 120px; height: 250px;
+      bottom: 14%;
+      width: 140px;
+      height: 250px;
       transform-origin: bottom center;
-      animation: palm-sway 6s ease-in-out infinite alternate;
-      will-change: transform;
+      animation: palm-sway 5s ease-in-out infinite alternate;
     }
 
-    .palm.left { left: 2%; }
-    .palm.right { right: 7%; scale: 0.85; animation-duration: 7.5s; animation-delay: -2s; }
+    .palm.left { left: 5%; }
+    .palm.right { right: 8%; scale: 0.85; animation-duration: 6s; animation-delay: -2s; }
 
     .palm .trunk {
       position: absolute;
-      bottom: 0; left: 46%;
-      width: 26px; height: 170px;
-      border-radius: 12px;
-      background: linear-gradient(180deg, #965f37 0%, var(--palm-trunk) 100%);
-      transform: skewX(-6deg);
-      box-shadow: inset -4px 0 0 rgba(77, 43, 19, 0.3);
+      bottom: 0;
+      left: 55px;
+      width: 28px;
+      height: 180px;
+      background: repeating-linear-gradient(
+        -10deg,
+        var(--palm-trunk) 0,
+        var(--palm-trunk) 15px,
+        rgba(0,0,0,0.08) 15px,
+        rgba(0,0,0,0.08) 20px
+      );
+      border-radius: 14px;
+      box-shadow: inset -6px 0 0 rgba(0,0,0,0.1);
+      transform-origin: bottom center;
     }
 
-    .palm .leaf {
+    .palm.left .trunk { transform: rotate(-5deg); }
+    .palm.right .trunk { transform: rotate(5deg); }
+
+    .palm .coconuts {
       position: absolute;
-      left: 50%; top: 35px;
-      width: 86px; height: 18px;
-      border-radius: 0 18px 18px 18px;
-      background: linear-gradient(90deg, #4ebf5f 0%, var(--palm-leaf) 80%);
-      transform-origin: left center;
-      box-shadow: inset -4px 0 0 rgba(22, 94, 45, 0.3);
+      top: 45px;
+      left: 65px;
+      z-index: 3;
     }
 
-    .palm .leaf.a { rotate: -40deg; }
-    .palm .leaf.b { rotate: -10deg; width: 96px; }
-    .palm .leaf.c { rotate: 20deg; width: 90px; }
-    .palm .leaf.d { rotate: 46deg; width: 80px; }
+    .palm .nut {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      background: #8a5a44;
+      border-radius: 50%;
+      transform: translate(calc(var(--tx) - 50%), calc(var(--ty) - 50%));
+      box-shadow: inset -3px -3px 0 #5c3b2c;
+    }
 
+    /* Tán dừa bãi biển: lá dài, xẻ rãnh múp míp */
+    .palm .crown {
+      position: absolute;
+      top: 40px;
+      left: 65px;
+      width: 0;
+      height: 0;
+    }
+
+    .palm .frond {
+      position: absolute;
+      background: var(--palm-leaf);
+      border-radius: 100px 0 100px 0; /* Bo cong hình cung dài */
+      box-shadow: inset 4px -4px 0 var(--palm-leaf-dark);
+      transform-origin: bottom right; /* Rễ lá nằm ở cuống */
+      right: 0;
+      bottom: 0;
+      /* Dùng mask cắt xẻ rãnh to bản cho ra dáng lá dừa chibi */
+      -webkit-mask-image: repeating-linear-gradient(-45deg, #000 0, #000 14px, transparent 14px, transparent 18px);
+      mask-image: repeating-linear-gradient(-45deg, #000 0, #000 14px, transparent 14px, transparent 18px);
+      animation: leaf-flutter-cute 2s ease-in-out infinite alternate;
+      animation-delay: var(--dly);
+    }
+
+    /* Định vị 6 tàu lá xòe ra xung quanh */
+    .palm .frond.a { width: 90px; height: 35px; --rot: 0deg; --dly: 0s; z-index: 2; }
+    .palm .frond.b { width: 100px; height: 40px; --rot: 50deg; --dly: -0.5s; z-index: 3; }
+    .palm .frond.c { width: 95px; height: 35px; --rot: 100deg; --dly: -1s; z-index: 2; }
+    .palm .frond.d { width: 85px; height: 30px; --rot: 150deg; --dly: -0.2s; z-index: 1; }
+    .palm .frond.e { width: 95px; height: 40px; --rot: -60deg; --dly: -0.8s; z-index: 3; }
+    .palm .frond.f { width: 80px; height: 30px; --rot: -110deg; --dly: -1.2s; z-index: 1; }
+
+
+    /* ====== GHẾ & DÙ CHIBI ====== */
     .chair {
       position: absolute;
-      right: 21%; bottom: 15%;
-      width: 120px; height: 50px;
-      z-index: 2;
-    }
-
-    .chair::before, .chair::after {
-      content: "";
-      position: absolute;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(117, 72, 38, 0.2);
+      right: 22%;
+      bottom: 15%;
+      width: 100px;
+      height: 45px;
     }
 
     .chair::before {
-      width: 86px; height: 26px;
-      left: 16px; top: 4px;
-      transform: skewX(-18deg);
-      background: repeating-linear-gradient(90deg, #fffaeb 0 10px, #f2af46 10px 20px);
-      border: 2px solid rgba(255, 255, 255, 0.8);
+      content: "";
+      position: absolute;
+      width: 90px;
+      height: 30px;
+      left: 5px;
+      top: 0;
+      border-radius: 15px;
+      background: repeating-linear-gradient(90deg, #ffb3c6 0 15px, #ffffcc 15px 30px);
+      border: 4px solid #fff;
+      box-shadow: 0 6px 0 rgba(0,0,0,0.1);
     }
 
     .chair::after {
-      width: 110px; height: 6px;
-      bottom: 12px; left: 6px;
-      background: #7a4a28;
+      content: "";
+      position: absolute;
+      width: 80px;
+      height: 8px;
+      bottom: 0;
+      left: 10px;
+      background: #d1976b;
+      border-radius: 4px;
     }
 
     .umbrella {
       position: absolute;
-      right: 32%; bottom: 17%;
-      width: 130px; height: 140px;
-      z-index: 2;
+      right: 33%;
+      bottom: 16%;
+      width: 120px;
+      height: 130px;
     }
 
     .umbrella::before {
       content: "";
       position: absolute;
-      top: 0; left: 10px;
-      width: 110px; height: 60px;
-      border-radius: 80px 80px 16px 16px;
-      background: conic-gradient(from 180deg, #f0fbfc 0deg 45deg, #f06741 45deg 90deg, #f0fbfc 90deg 135deg, #f06741 135deg 180deg);
-      box-shadow: 0 6px 12px rgba(135, 68, 25, 0.15);
+      top: 0;
+      left: 0;
+      width: 120px;
+      height: 60px;
+      border-radius: 60px 60px 0 0;
+      background: conic-gradient(from 180deg, #a3e4ff 0deg 45deg, #ffb3c6 45deg 90deg, #a3e4ff 90deg 135deg, #ffb3c6 135deg 180deg);
+      box-shadow: 0 8px 0 rgba(0,0,0,0.1);
     }
 
     .umbrella::after {
       content: "";
       position: absolute;
-      left: 62px; top: 46px;
-      width: 5px; height: 86px;
-      border-radius: 5px;
-      background: #784d2a;
+      left: 56px;
+      top: 60px;
+      width: 8px;
+      height: 70px;
+      border-radius: 4px;
+      background: #d1976b;
     }
 
+    /* ====== RÁC TRÊN BÃI BIỂN ====== */
     .beach-item {
       position: absolute;
-      width: 32px; height: 32px;
-      display: grid; place-items: center;
-      font-size: 20px; line-height: 1;
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.6);
-      box-shadow: 0 4px 8px rgba(135, 78, 38, 0.2);
-      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s;
+      background: #fff;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+      transition: scale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s, filter 0.2s;
       user-select: none;
-      z-index: 4;
     }
 
-    .beach-item.hidden { opacity: 0; transform: scale(0.3); }
+    .beach-item.targeted {
+      filter: drop-shadow(0 0 4px #ffeb85);
+      scale: 1.15;
+    }
 
+    .beach-item.hidden {
+      opacity: 0;
+      scale: 0.2;
+    }
+
+    .spawn-anim {
+      animation: item-spawn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    /* ====== ỐC MƯỢN HỒN CHIBI CUTE ====== */
     .hermit {
-      --stride: 0.2s;
+      --stride: 0.25s;
       position: absolute;
-      width: 76px; height: 52px;
-      z-index: 6;
+      width: 70px;
+      height: 56px;
       transform-origin: center;
-      /* Dùng drop-shadow dịu hơn */
-      filter: drop-shadow(0 4px 4px rgba(117, 65, 26, 0.25));
+      filter: drop-shadow(0 6px 0 rgba(0, 0, 0, 0.1));
       will-change: transform;
       pointer-events: auto;
       cursor: pointer;
-      transition: filter 0.2s ease;
+      transition: filter 0.25s ease;
     }
 
-    .hermit.fleeing { filter: drop-shadow(0 8px 6px rgba(117, 65, 26, 0.35)); }
+    .hermit.fleeing {
+      filter: drop-shadow(0 12px 0 rgba(0, 0, 0, 0.15));
+    }
 
     .hermit .shadow {
       position: absolute;
-      width: 60px; height: 12px;
-      left: 8px; bottom: 2px;
+      width: 44px;
+      height: 10px;
+      left: 13px;
+      bottom: -2px;
       border-radius: 50%;
-      background: rgba(87, 46, 17, 0.15);
+      background: rgba(0,0,0,0.15);
     }
-
-    .hermit .legs {
-      position: absolute;
-      left: 22px; bottom: 10px;
-      width: 32px; height: 10px;
-      border-bottom: 2px solid var(--crab-dark);
-    }
-
-    .hermit .legs::before, .hermit .legs::after {
-      content: "";
-      position: absolute;
-      width: 16px; height: 8px;
-      bottom: -3px;
-      border-bottom: 2px solid var(--crab-dark);
-    }
-
-    .hermit .legs::before { left: -14px; transform: rotate(18deg); }
-    .hermit .legs::after { right: -14px; transform: rotate(-18deg); }
 
     .hermit .shell {
       position: absolute;
-      left: 26px; bottom: 15px;
-      width: 36px; height: 26px;
-      border-radius: 55% 45% 42% 58%;
-      background: radial-gradient(circle at 24% 24%, #b5865a 0 20%, var(--shell) 46%, var(--shell-dark) 100%);
-      box-shadow: inset -4px -4px 0 rgba(84, 48, 26, 0.3);
+      left: 20px;
+      bottom: 14px;
+      width: 44px;
+      height: 36px;
+      border-radius: 40% 60% 50% 50%;
+      background: var(--shell-cute);
+      box-shadow: inset -5px -5px 0 var(--shell-cute-dark);
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .hermit .shell::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 24px;
+      height: 24px;
+      border: 4px solid var(--shell-cute-dark);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      clip-path: polygon(0 0, 100% 0, 100% 70%, 0 70%);
     }
 
     .hermit .torso {
       position: absolute;
-      left: 16px; bottom: 11px;
-      width: 34px; height: 22px;
-      border-radius: 14px;
-      background: linear-gradient(180deg, #f27c5a 0%, var(--crab) 100%);
-      box-shadow: inset -3px -2px 0 rgba(166, 52, 28, 0.4);
+      left: 12px;
+      bottom: 12px;
+      width: 26px;
+      height: 22px;
+      border-radius: 12px;
+      background: var(--crab-cute);
+      box-shadow: inset -3px -3px 0 var(--crab-cute-dark);
+      z-index: 1;
     }
-
-    .hermit .claw {
-      position: absolute;
-      bottom: 16px;
-      width: 12px; height: 10px;
-      border-radius: 8px;
-      background: var(--crab);
-    }
-
-    .hermit .claw.left { left: 6px; rotate: 28deg; }
-    .hermit .claw.right { left: 48px; rotate: -28deg; }
 
     .hermit .eye {
       position: absolute;
-      width: 6px; height: 12px;
-      border-radius: 8px;
-      background: var(--crab);
-      top: 5px;
-      box-shadow: inset 0 -3px 0 rgba(166, 52, 28, 0.4);
+      bottom: 24px;
+      width: 14px;
+      height: 18px;
+      background: white;
+      border-radius: 50%;
+      z-index: 4;
+      box-shadow: 0 3px 0 rgba(0,0,0,0.1);
+    }
+
+    .hermit .eye::before {
+      content: "";
+      position: absolute;
+      bottom: 2px;
+      left: 2px;
+      width: 10px;
+      height: 12px;
+      border-radius: 50%;
+      background: #222;
     }
 
     .hermit .eye::after {
       content: "";
       position: absolute;
-      top: -3px; left: 1px;
-      width: 4px; height: 4px;
+      top: 3px;
+      left: 6px;
+      width: 4px;
+      height: 6px;
       border-radius: 50%;
-      background: #111;
+      background: white;
     }
 
-    .hermit .eye.left { left: 22px; }
-    .hermit .eye.right { left: 36px; }
+    .hermit .eye.left { left: 8px; }
+    .hermit .eye.right { left: 24px; }
+
+    .hermit .claw {
+      position: absolute;
+      background: var(--crab-cute);
+      border-radius: 50%;
+      box-shadow: inset -3px -3px 0 var(--crab-cute-dark);
+      z-index: 3;
+    }
+
+    .hermit .claw.left {
+      bottom: 8px;
+      left: -4px;
+      width: 22px;
+      height: 22px;
+    }
+
+    .hermit .claw.right {
+      bottom: 12px;
+      left: 34px;
+      width: 16px;
+      height: 16px;
+    }
+
+    .hermit .leg {
+      position: absolute;
+      width: 8px;
+      height: 14px;
+      background: var(--crab-cute);
+      border-radius: 4px;
+      bottom: 6px;
+      z-index: 0;
+      box-shadow: inset -2px -2px 0 var(--crab-cute-dark);
+    }
+
+    .hermit .leg.l1 { left: 14px; transform: rotate(20deg); }
+    .hermit .leg.r1 { left: 28px; transform: rotate(-20deg); }
 
     .hermit .held-item {
       position: absolute;
-      left: 4px; top: -12px;
-      width: 20px; height: 20px;
-      display: grid; place-items: center;
-      font-size: 16px;
+      left: -2px;
+      top: -14px;
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
       opacity: 0;
-      transition: opacity 0.2s ease;
+      transition: opacity 0.25s ease;
+      z-index: 10;
     }
 
-    .hermit.walking .legs { animation: leg-trot var(--stride) steps(2, end) infinite; }
-    .hermit.walking .shell { animation: shell-bob 0.4s ease-in-out infinite alternate; }
-    .hermit.carrying .held-item { opacity: 1; animation: toy-wobble 1s ease-in-out infinite alternate; }
-
-    @media (max-width: 720px) {
-      .title-card p { display: none; }
-      .umbrella { right: 4%; bottom: 19%; scale: 0.8; }
-      .chair { right: 35%; bottom: 13%; scale: 0.8; }
-      .palm.right { right: -4%; bottom: 18%; scale: 0.7; }
+    /* ====== HOẠT ẢNH CHUNG ====== */
+    .sparkle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: #fff;
+      clip-path: polygon(50% 0%, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0% 50%, 39% 39%);
+      animation: sparkle-float var(--dur) ease-in-out infinite alternate;
+      will-change: transform, opacity;
     }
 
-    /* Keyframes */
-    @keyframes cloud-drift { from { transform: translateX(0); } to { transform: translateX(150vw); } }
-    @keyframes wave-shift { from { background-position-x: 0; } to { background-position-x: 220px; } }
-    @keyframes palm-sway { from { transform: rotate(1deg); } to { transform: rotate(-2.5deg); } }
-    @keyframes leg-trot { from { transform: translateY(0); } to { transform: translateY(1.5px); } }
-    @keyframes shell-bob { from { transform: translateY(0); } to { transform: translateY(-1.5px); } }
-    @keyframes toy-wobble { from { transform: rotate(-10deg) translateY(0); } to { transform: rotate(10deg) translateY(-2px); } }
-    @keyframes pulse-fail { from { box-shadow: 0 4px 10px rgba(181, 56, 47, 0.3); } to { box-shadow: 0 6px 16px rgba(224, 73, 63, 0.6); } }
-    @keyframes sun-glow { from { transform: scale(1); opacity: 0.7; } to { transform: scale(1.15); opacity: 0.9; } }
-    @keyframes haze-drift { from { transform: translateX(-15px); } to { transform: translateX(15px); } }
-    @keyframes shore-foam { from { background-position-x: 0; } to { background-position-x: 180px; } }
-    @keyframes bird-fly { from { transform: translateX(0); } to { transform: translateX(120vw); } }
-    @keyframes bird-wing { from { transform: rotate(14deg); } to { transform: rotate(-6deg); } }
+    .hermit.walking .shell { animation: shell-bob-cute 0.3s ease-in-out infinite alternate; }
+    .hermit.carrying .held-item { opacity: 1; animation: toy-wobble-cute 1s ease-in-out infinite alternate; }
+    .hermit.walking .leg.l1 { animation: walk-cute-l 0.2s infinite alternate; }
+    .hermit.walking .leg.r1 { animation: walk-cute-r 0.2s infinite alternate; }
+
+    @keyframes item-spawn { 
+      0% { scale: 0; opacity: 0; transform: translateY(-20px); } 
+      60% { scale: 1.2; opacity: 1; transform: translateY(0); } 
+      100% { scale: 1; opacity: 1; transform: translateY(0); } 
+    }
+
+    @keyframes shell-bob-cute { from { transform: translateY(0); } to { transform: translateY(-4px) rotate(4deg); } }
+    @keyframes walk-cute-l { 0% { transform: rotate(20deg) translateY(0); } 100% { transform: rotate(45deg) translateY(-4px); } }
+    @keyframes walk-cute-r { 0% { transform: rotate(-20deg) translateY(0); } 100% { transform: rotate(5deg) translateY(-4px); } }
+    @keyframes toy-wobble-cute { from { transform: rotate(-10deg) translateY(0) scale(1); } to { transform: rotate(10deg) translateY(-4px) scale(1.1); } }
     
-    /* Animation cho sparkles chạy bằng pure CSS */
-    @keyframes sparkle-float {
-      0% { transform: translate(0, 0) scale(0.8); opacity: 0.2; }
-      100% { transform: translate(var(--tx), var(--ty)) scale(1.2); opacity: 0.8; }
+    @keyframes wave-pan { 0% { transform: translateX(0) translateZ(0); } 100% { transform: translateX(-50%) translateZ(0); } }
+    @keyframes wave-pan-reverse { 0% { transform: translateX(-50%) translateZ(0); } 100% { transform: translateX(0) translateZ(0); } }
+    @keyframes wash-breathe { 0% { transform: scaleY(0.7); opacity: 0.9; } 100% { transform: scaleY(1.3); opacity: 0.3; } }
+    @keyframes cloud-drift { from { transform: translateX(0); } to { transform: translateX(150vw); } }
+    @keyframes palm-sway { from { transform: rotate(2deg); } to { transform: rotate(-3deg); } }
+    
+    @keyframes leaf-flutter-cute { 
+      0% { transform: rotate(var(--rot)) scale(1); } 
+      100% { transform: rotate(calc(var(--rot) + 4deg)) scale(1.05); } 
+    }
+
+    @keyframes haze-drift { from { transform: translateX(-20px); } to { transform: translateX(20px); } }
+    @keyframes sparkle-float { 0% { transform: translate(0, 0) scale(0.6) rotate(0deg); opacity: 0.4; } 100% { transform: translate(var(--tx), var(--ty)) scale(1.4) rotate(180deg); opacity: 1; } }
+    @keyframes sun-bob-cute { from { transform: translateY(0); } to { transform: translateY(-15px); } }
+    @keyframes sun-ray-spin { 100% { transform: rotate(360deg); } }
+    @keyframes eye-blink { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(0.1); } }
+    @keyframes pulse-fail { from { box-shadow: 0 4px 0 #cc3d3d; } to { box-shadow: 0 8px 0 #cc3d3d; transform: translateY(-2px); } }
+
+    @media (max-width: 720px) { 
+      .umbrella { right: 4%; bottom: 19%; scale: 0.8; } 
+      .chair { right: 35%; bottom: 13%; scale: 0.8; } 
+      .palm.right { right: -4%; bottom: 18%; scale: 0.7; } 
     }
   </style>
 </head>
 <body>
   <main class="beach-scene" id="beachScene">
     <div class="sky"></div>
-    <div class="bird one" aria-hidden="true"></div>
-    <div class="bird two" aria-hidden="true"></div>
     <div class="sun">
       <div class="sun-face" aria-hidden="true">
         <span class="sun-eye left"></span>
         <span class="sun-eye right"></span>
+        <span class="sun-blush left"></span>
+        <span class="sun-blush right"></span>
         <span class="sun-mouth"></span>
       </div>
     </div>
+    
     <div class="cloud one"></div>
     <div class="cloud two"></div>
     <div class="cloud three"></div>
-    <div class="horizon-haze"></div>
-    <div class="sea"></div>
-    <div class="sand"></div>
+    
+    <div class="sea">
+      <div class="wave wave-bg"></div>
+      <div class="wave wave-mid"></div>
+      <div class="wave wave-front"></div>
+    </div>
+    
+    <div class="sand">
+      <div class="sand-wash-wrap">
+        <div class="sand-wash"></div>
+      </div>
+    </div>
 
     <section class="title-card">
       <div class="title-row">
-        <h1>Hermit Home Beach</h1>
-        <button id="consoleToggle" class="console-toggle" type="button" aria-label="Open live diagnostic console" title="Live Diagnostic Console">&#x2328;</button>
+        <h1>Eco Hermit Squad</h1>
+        <button id="consoleToggle" class="console-toggle" type="button" title="Console">&#x2328;</button>
       </div>
-      <p>Tap a crab and watch it sprint away.</p>
+      <p>Crabs are cleaning the beach! Watch them sort trash.</p>
     </section>
 
+    <!-- HỆ THỐNG PHÂN LỚP -->
     <div class="decor-layer">
+      <!-- Cây dừa chẻ lá chuẩn bãi biển -->
       <div class="palm left">
-        <div class="trunk"></div><div class="leaf a"></div><div class="leaf b"></div><div class="leaf c"></div><div class="leaf d"></div>
+        <div class="trunk"></div>
+        <div class="coconuts">
+          <div class="nut" style="--tx: -10px; --ty: -5px;"></div>
+          <div class="nut" style="--tx: 10px; --ty: 0px;"></div>
+          <div class="nut" style="--tx: 0px; --ty: 10px; z-index: 3;"></div>
+        </div>
+        <div class="crown">
+          <div class="frond a"></div>
+          <div class="frond b"></div>
+          <div class="frond c"></div>
+          <div class="frond d"></div>
+          <div class="frond e"></div>
+          <div class="frond f"></div>
+        </div>
       </div>
       <div class="palm right">
-        <div class="trunk"></div><div class="leaf a"></div><div class="leaf b"></div><div class="leaf c"></div><div class="leaf d"></div>
+        <div class="trunk"></div>
+        <div class="coconuts">
+          <div class="nut" style="--tx: -8px; --ty: 0px;"></div>
+          <div class="nut" style="--tx: 8px; --ty: -5px;"></div>
+          <div class="nut" style="--tx: 0px; --ty: 10px; z-index: 3;"></div>
+        </div>
+        <div class="crown">
+          <div class="frond a"></div>
+          <div class="frond b"></div>
+          <div class="frond c"></div>
+          <div class="frond d"></div>
+          <div class="frond e"></div>
+          <div class="frond f"></div>
+        </div>
       </div>
       <div class="umbrella"></div>
       <div class="chair"></div>
     </div>
 
+    <div class="bin-layer" id="binLayer"></div>
     <div class="item-layer" id="itemLayer"></div>
-    <div class="sparkle-layer" id="sparkleLayer"></div>
     <div class="crab-layer" id="crabLayer"></div>
+    <div class="sparkle-layer" id="sparkleLayer"></div>
   </main>
 
   <aside id="consoleOverlay" class="console-overlay" aria-hidden="true">
@@ -744,16 +987,23 @@
 
   <script>
     (function () {
-      const crabCount = 5;
-      // Đổi icon rác thật sự để hợp concept
-      const renderedItemIcons = ["🥤", "🛍️", "🥫", "🪣", "📦", "🩴", "🥥", "🍾"];
+      const crabCount = 6;
       const SEA_TOP_RATIO = 0.42;
       const SAND_TOP_RATIO = 0.60;
+      const DIAGNOSTIC_POLL_MS = 4000;
+      
+      // Danh mục rác thải
+      const TRASH_TYPES = {
+        ORGANIC: { color: 'bin-organic', label: '🌿', items: ['🍎', '🍌', '🍉', '🦴'] },
+        PLASTIC: { color: 'bin-plastic', label: '♻️', items: ['🥤', '🛍️', '🧴', '🪣'] },
+        PAPER:   { color: 'bin-paper', label: '📦', items: ['📦', '📰', '🧻', '📄'] }
+      };
 
       const beachScene = document.getElementById("beachScene");
       const itemLayer = document.getElementById("itemLayer");
       const sparkleLayer = document.getElementById("sparkleLayer");
       const crabLayer = document.getElementById("crabLayer");
+      const binLayer = document.getElementById("binLayer");
       const consoleToggle = document.getElementById("consoleToggle");
       const consoleOverlay = document.getElementById("consoleOverlay");
       const consoleCloseBtn = document.getElementById("consoleCloseBtn");
@@ -764,7 +1014,8 @@
 
       const items = [];
       const crabs = [];
-      const DIAGNOSTIC_POLL_MS = 4000;
+      const bins = {};
+
       let diagnosticsOnline = false;
       let diagnosticsFetchAt = null;
 
@@ -773,24 +1024,22 @@
       const toClock = (isoValue) => {
         if (!isoValue) return "--:--:--";
         const date = new Date(isoValue);
-        return Number.isNaN(date.getTime()) ? "--:--:--" : date.toLocaleTimeString([], { hour12: false });
+        if (Number.isNaN(date.getTime())) return "--:--:--";
+        return date.toLocaleTimeString([], { hour12: false });
       };
-      const iconState = (state) => (state ? "ON" : "OFF");
-      const escapeHtml = (value) =>
-        String(value)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#39;");
 
+      const iconState = (state) => state ? "ON" : "OFF";
+
+      // ======== CONSOLE LOGIC ========
       const setConsoleIconFailState = (hasFail) => {
-        if (consoleToggle) consoleToggle.classList.toggle("has-fail", hasFail);
+        if (!consoleToggle) return;
+        consoleToggle.classList.toggle("has-fail", hasFail);
       };
 
       const renderStatusBar = (logs, hasError) => {
         if (!consoleStatusBar) return;
         const counters = { PASS: 0, FAIL: 0, PENDING: 0, INFO: 0 };
+        
         for (const log of logs) {
           const key = typeof log.status === "string" ? log.status.toUpperCase() : "INFO";
           if (key in counters) counters[key] += 1;
@@ -798,7 +1047,9 @@
 
         const sourceText = diagnosticsOnline && !hasError ? "Live" : "Disconnected";
         const sourceClass = diagnosticsOnline && !hasError ? "pass" : "fail";
-        const refreshedText = diagnosticsFetchAt ? "Updated " + diagnosticsFetchAt.toLocaleTimeString([], { hour12: false }) : "Waiting";
+        const refreshedText = diagnosticsFetchAt 
+          ? "Updated " + diagnosticsFetchAt.toLocaleTimeString([], { hour12: false }) 
+          : "Waiting";
 
         consoleStatusBar.innerHTML =
           `<span class="status-chip ${sourceClass}">Stream: ${sourceText}</span>` +
@@ -811,11 +1062,18 @@
 
       const renderLogs = (logs, errorMessage) => {
         if (!consoleLogList || !consoleEmpty) return;
+        
         consoleLogList.innerHTML = "";
         
         if (errorMessage) {
-          const safeError = escapeHtml(errorMessage);
-          consoleLogList.innerHTML = `<li class="console-log-item"><span class="log-time">--:--:--</span><span class="log-status FAIL">FAIL</span><span class="log-source">api</span><span class="log-message">[FAIL] Could not load logs: ${safeError}</span></li>`;
+          consoleLogList.innerHTML = `
+            <li class="console-log-item">
+              <span class="log-time">--:--:--</span>
+              <span class="log-status FAIL">FAIL</span>
+              <span class="log-source">api</span>
+              <span class="log-message">[FAIL] Could not load logs: ${errorMessage}</span>
+            </li>
+          `;
           consoleEmpty.hidden = true;
           setConsoleIconFailState(true);
           return;
@@ -833,14 +1091,22 @@
         for (const log of logs) {
           const statusText = (log.status || "INFO").toUpperCase();
           if (statusText === "FAIL") hasFail = true;
-          const relayText = log.relay ? ` [${escapeHtml(log.relay)}=${iconState(Boolean(log.expectedState))}]` : "";
-          const deviceText = log.deviceId ? ` {device:${escapeHtml(log.deviceId)}}` : "";
-          const safeSource = escapeHtml(log.source || "system");
-          const safeMessage = escapeHtml(log.message || "[INFO] Event");
-          const safeTime = escapeHtml(toClock(log.createdAt));
           
-          consoleLogList.innerHTML += `<li class="console-log-item"><span class="log-time">${safeTime}</span><span class="log-status ${statusText}">${statusText}</span><span class="log-source">${safeSource}</span><span class="log-message">${safeMessage + relayText + deviceText}</span></li>`;
+          const relayText = log.relay ? ` [${log.relay}=${iconState(Boolean(log.expectedState))}]` : "";
+          const deviceText = log.deviceId ? ` {device:${log.deviceId}}` : "";
+          const finalMessage = (log.message || "[INFO] Event") + relayText + deviceText;
+          
+          const li = document.createElement("li");
+          li.className = "console-log-item";
+          li.innerHTML = `
+            <span class="log-time">${toClock(log.createdAt)}</span>
+            <span class="log-status ${statusText}">${statusText}</span>
+            <span class="log-source">${log.source || "system"}</span>
+            <span class="log-message">${finalMessage}</span>
+          `;
+          consoleLogList.appendChild(li);
         }
+        
         setConsoleIconFailState(hasFail);
       };
 
@@ -848,8 +1114,10 @@
         try {
           const response = await fetch("/api/logs?limit=140", { cache: "no-store" });
           if (!response.ok) throw new Error("HTTP " + response.status);
+          
           const payload = await response.json();
           const logs = Array.isArray(payload.logs) ? payload.logs : [];
+          
           diagnosticsOnline = true;
           diagnosticsFetchAt = new Date();
           renderStatusBar(logs, false);
@@ -857,8 +1125,9 @@
         } catch (error) {
           diagnosticsOnline = false;
           diagnosticsFetchAt = new Date();
+          const message = error instanceof Error ? error.message : "unknown error";
           renderStatusBar([], true);
-          renderLogs([], error instanceof Error ? error.message : "unknown error");
+          renderLogs([], message);
         }
       };
 
@@ -875,79 +1144,82 @@
         consoleOverlay.setAttribute("aria-hidden", "true");
       };
 
-      // Tách hàm bounds() ra không gọi liên tục trong requestAnimationFrame nữa
+      // ======== GAME LOGIC ========
       const bounds = () => {
         const width = beachScene.clientWidth;
         const height = beachScene.clientHeight;
         const sandTop = height * SAND_TOP_RATIO;
-        return {
-          width, height,
-          left: 18, right: width - 90,
-          top: sandTop + 16, bottom: height - 60
+        return { 
+          width: width, 
+          height: height, 
+          left: 20, 
+          right: width - 80, 
+          top: sandTop + 30, 
+          bottom: height - 60 
         };
       };
       
       let currentArena = bounds();
 
-      // Đẩy sparkles animation qua CSS hoàn toàn thay vì update mỗi tick bằng JS
-      const createSparkles = (arena) => {
-        if (!sparkleLayer) return;
-        sparkleLayer.innerHTML = "";
-        const count = Math.max(20, Math.floor(arena.width / 45));
-        const seaTop = arena.height * SEA_TOP_RATIO;
-        const seaBottom = arena.height * SAND_TOP_RATIO;
-
-        for (let i = 0; i < count; i++) {
-          const el = document.createElement("span");
-          el.className = "sparkle";
-          el.style.left = randomBetween(14, arena.width - 14) + "px";
-          el.style.top = randomBetween(seaTop + 8, seaBottom - 10) + "px";
-          el.style.animationDelay = (-Math.random() * 4).toFixed(2) + "s";
-          el.style.setProperty('--tx', randomBetween(-15, 15) + "px");
-          el.style.setProperty('--ty', randomBetween(-15, 15) + "px");
-          el.style.setProperty('--dur', randomBetween(2, 4.5).toFixed(2) + "s");
-          sparkleLayer.appendChild(el);
-        }
+      const setPoint = (el, x, y) => { 
+        // Phải dùng style.left và top độc lập thay vì transform để không xung đột với scale animation của rác
+        el.style.left = `${x}px`; 
+        el.style.top = `${y}px`; 
       };
 
-      const setPoint = (el, x, y) => {
-        el.style.transform = `translate(${x}px, ${y}px)`;
+      const createBins = () => {
+        binLayer.innerHTML = "";
+        const binKeys = Object.keys(TRASH_TYPES);
+        
+        // Đã dịch sang bên phải một chút để né cây dừa bên trái
+        const startX = currentArena.left + 140; 
+        const binY = currentArena.bottom - 60; 
+        const spacing = 75;
+
+        binKeys.forEach((key, index) => {
+          const type = TRASH_TYPES[key];
+          const el = document.createElement("div");
+          el.className = `trash-bin ${type.color}`;
+          el.textContent = type.label;
+          
+          const binX = startX + (index * spacing);
+          setPoint(el, binX, binY);
+          binLayer.appendChild(el);
+
+          bins[key] = { 
+            id: key, 
+            element: el, 
+            x: binX + 27, // Điểm giữa đáy thùng
+            y: binY + 50 
+          }; 
+        });
       };
 
-      const fleeFromPoint = (crab, clientX, clientY, now, arena) => {
-        const sceneRect = beachScene.getBoundingClientRect();
-        const sourceX = clientX - sceneRect.left;
-        const sourceY = clientY - sceneRect.top;
-        const vx = crab.x - sourceX;
-        const vy = crab.y - sourceY;
-        const magnitude = Math.hypot(vx, vy) || 1;
-        const fleeDistance = randomBetween(120, 220);
+      const spawnRandomTrash = () => {
+        if (items.filter(i => i.available).length >= 15) return;
 
-        crab.targetX = clamp(crab.x + (vx / magnitude) * fleeDistance, arena.left, arena.right);
-        crab.targetY = clamp(crab.y + (vy / magnitude) * fleeDistance, arena.top, arena.bottom);
-        crab.fleeUntil = now + randomBetween(900, 1500);
-        crab.nextTargetAt = crab.fleeUntil + randomBetween(500, 1000);
-        crab.nextPickupAt = crab.fleeUntil + randomBetween(900, 2000);
-      };
+        const keys = Object.keys(TRASH_TYPES);
+        const randomKey = keys[Math.floor(Math.random() * keys.length)];
+        const category = TRASH_TYPES[randomKey];
+        const icon = category.items[Math.floor(Math.random() * category.items.length)];
 
-      const chooseTarget = (crab, arena, now) => {
-        crab.targetX = randomBetween(arena.left, arena.right);
-        crab.targetY = randomBetween(arena.top, arena.bottom);
-        crab.nextTargetAt = now + randomBetween(1500, 3500);
-      };
-
-      const createItem = (id, icon, arena) => {
         const el = document.createElement("div");
-        el.className = "beach-item";
+        el.className = "beach-item spawn-anim";
         el.textContent = icon;
         itemLayer.appendChild(el);
 
         const item = {
-          id, icon, element: el,
-          x: randomBetween(arena.left, arena.right),
-          y: randomBetween(arena.top, arena.bottom),
-          available: true, heldBy: null
+          id: Date.now() + Math.random(),
+          icon: icon,
+          type: randomKey,
+          element: el,
+          // Tránh rác rơi vào đúng góc để thùng
+          x: randomBetween(currentArena.left + 350, currentArena.right), 
+          y: randomBetween(currentArena.top, currentArena.bottom),
+          available: true,
+          targetedBy: null
         };
+        
         setPoint(el, item.x, item.y);
         items.push(item);
       };
@@ -955,90 +1227,182 @@
       const createCrab = (id, arena) => {
         const el = document.createElement("div");
         el.className = "hermit";
-        el.innerHTML =
-          '<div class="shadow"></div><div class="legs"></div><div class="shell"></div>' +
-          '<div class="torso"></div><div class="claw left"></div><div class="claw right"></div>' +
-          '<div class="eye left"></div><div class="eye right"></div><div class="held-item"></div>';
+        el.innerHTML = `
+          <div class="shadow"></div>
+          <div class="leg l1"></div>
+          <div class="leg r1"></div>
+          <div class="shell"></div>
+          <div class="torso"></div>
+          <div class="claw left"></div>
+          <div class="claw right"></div>
+          <div class="eye left"></div>
+          <div class="eye right"></div>
+          <div class="held-item"></div>
+        `;
         crabLayer.appendChild(el);
 
-        const now = performance.now();
         const crab = {
-          id, element: el, heldElement: el.querySelector(".held-item"),
-          x: randomBetween(arena.left, arena.right),
+          id: id, 
+          element: el, 
+          heldElement: el.querySelector(".held-item"),
+          x: randomBetween(arena.left, arena.right), 
           y: randomBetween(arena.top, arena.bottom),
-          targetX: randomBetween(arena.left, arena.right),
-          targetY: randomBetween(arena.top, arena.bottom),
-          speed: randomBetween(28, 55),
-          scale: randomBetween(0.85, 1.1),
+          targetX: 0, 
+          targetY: 0,
+          speed: randomBetween(35, 65), 
+          scale: randomBetween(0.85, 1.15),
           facing: Math.random() > 0.5 ? 1 : -1,
-          holding: null, dropAt: 0, fleeUntil: 0,
-          nextTargetAt: now + randomBetween(500, 1400),
-          nextPickupAt: now + randomBetween(800, 1600)
+          state: 'WANDER', 
+          targetItem: null,
+          targetBin: null,
+          fleeUntil: 0, 
+          waitUntil: 0
         };
         
-        crab.element.style.setProperty("--stride", randomBetween(0.18, 0.26).toFixed(2) + "s");
-        crab.element.title = "Tap me";
-        el.addEventListener("pointerdown", (event) => {
-          event.preventDefault(); event.stopPropagation();
-          fleeFromPoint(crab, event.clientX, event.clientY, performance.now(), currentArena);
+        crab.element.style.setProperty("--stride", randomBetween(0.18, 0.28).toFixed(2) + "s");
+        crab.targetX = crab.x; 
+        crab.targetY = crab.y;
+        
+        el.addEventListener("pointerdown", (e) => {
+          e.preventDefault(); 
+          e.stopPropagation();
+          
+          if (crab.state === 'CARRY') dropTrash(crab, currentArena);
+          if (crab.targetItem) crab.targetItem.targetedBy = null;
+          
+          crab.state = 'FLEE';
+          const rect = beachScene.getBoundingClientRect();
+          const vx = crab.x - (e.clientX - rect.left);
+          const vy = crab.y - (e.clientY - rect.top);
+          const mag = Math.hypot(vx, vy) || 1;
+          
+          crab.targetX = clamp(crab.x + (vx/mag)*150, currentArena.left, currentArena.right);
+          crab.targetY = clamp(crab.y + (vy/mag)*150, currentArena.top, currentArena.bottom);
+          crab.fleeUntil = performance.now() + 1500;
         });
+        
         crabs.push(crab);
       };
 
-      const nearestItem = (crab, maxDistance) => {
+      const findNearestTrash = (crab) => {
         let winner = null;
-        let winnerDistance = Infinity;
+        let minDist = Infinity;
         for (const item of items) {
-          if (!item.available) continue;
-          const distance = Math.hypot(item.x - crab.x, item.y - crab.y);
-          if (distance < maxDistance && distance < winnerDistance) {
-            winner = item; winnerDistance = distance;
+          if (!item.available || item.targetedBy) continue;
+          const dist = Math.hypot(item.x - crab.x, item.y - crab.y);
+          if (dist < minDist) { 
+            winner = item; 
+            minDist = dist; 
           }
         }
         return winner;
       };
 
-      const pickupItem = (crab, item, now) => {
-        item.available = false; item.heldBy = crab.id;
+      const pickupTrash = (crab, item) => {
+        item.available = false;
         item.element.classList.add("hidden");
-        crab.holding = item;
-        crab.dropAt = now + randomBetween(2500, 5000);
+        item.element.classList.remove("targeted");
+        
+        crab.targetItem = item;
         crab.heldElement.textContent = item.icon;
         crab.element.classList.add("carrying");
       };
 
-      const dropItem = (crab, arena) => {
-        if (!crab.holding) return;
-        const item = crab.holding;
-        item.x = clamp(crab.x + randomBetween(-50, 50), arena.left, arena.right);
-        item.y = clamp(crab.y + randomBetween(-15, 30), arena.top, arena.bottom);
-        item.available = true; item.heldBy = null;
+      const dropTrash = (crab, arena) => {
+        if (!crab.targetItem) return;
+        const item = crab.targetItem;
+        
+        item.x = clamp(crab.x + randomBetween(-30, 30), arena.left, arena.right);
+        item.y = clamp(crab.y + randomBetween(-10, 20), arena.top, arena.bottom);
+        item.available = true; 
+        item.targetedBy = null;
+        
         setPoint(item.element, item.x, item.y);
         item.element.classList.remove("hidden");
-        crab.holding = null;
+        
+        crab.targetItem = null;
         crab.heldElement.textContent = "";
         crab.element.classList.remove("carrying");
       };
 
-      const updateCrab = (crab, dt, now, arena) => {
+      const throwInBin = (crab) => {
+        const idx = items.findIndex(i => i.id === crab.targetItem.id);
+        if(idx > -1) {
+          items[idx].element.remove();
+          items.splice(idx, 1);
+        }
+        
+        crab.targetBin.element.classList.remove("pop");
+        void crab.targetBin.element.offsetWidth; 
+        crab.targetBin.element.classList.add("pop");
+
+        crab.targetItem = null;
+        crab.targetBin = null;
+        crab.heldElement.textContent = "";
+        crab.element.classList.remove("carrying");
+      };
+
+      const updateCrabAI = (crab, dt, now, arena) => {
+        if (crab.state === 'FLEE') {
+          if (now > crab.fleeUntil) crab.state = 'WANDER';
+        }
+        else if (crab.state === 'WANDER' && now > crab.waitUntil) {
+          const trash = findNearestTrash(crab);
+          if (trash) {
+            crab.state = 'SEEK';
+            crab.targetItem = trash;
+            trash.targetedBy = crab.id;
+            trash.element.classList.add("targeted");
+            crab.targetX = trash.x; 
+            crab.targetY = trash.y;
+          } else {
+            if (Math.hypot(crab.targetX - crab.x, crab.targetY - crab.y) < 5) {
+               crab.targetX = randomBetween(arena.left, arena.right);
+               crab.targetY = randomBetween(arena.top, arena.bottom);
+               crab.waitUntil = now + randomBetween(1000, 3000);
+            }
+          }
+        }
+        else if (crab.state === 'SEEK') {
+          if (!crab.targetItem || !crab.targetItem.available) {
+            crab.state = 'WANDER';
+          } else {
+            crab.targetX = crab.targetItem.x; 
+            crab.targetY = crab.targetItem.y;
+            if (Math.hypot(crab.targetX - crab.x, crab.targetY - crab.y) < 15) {
+              pickupTrash(crab, crab.targetItem);
+              crab.state = 'CARRY';
+              crab.targetBin = bins[crab.targetItem.type];
+              crab.targetX = crab.targetBin.x; 
+              crab.targetY = crab.targetBin.y;
+            }
+          }
+        }
+        else if (crab.state === 'CARRY') {
+           crab.targetX = crab.targetBin.x; 
+           crab.targetY = crab.targetBin.y;
+           if (Math.hypot(crab.targetX - crab.x, crab.targetY - crab.y) < 20) {
+              throwInBin(crab);
+              crab.state = 'WANDER';
+              crab.waitUntil = now + 1000;
+           }
+        }
+
         const dx = crab.targetX - crab.x;
         const dy = crab.targetY - crab.y;
         const distance = Math.hypot(dx, dy);
-        const fleeing = now < crab.fleeUntil;
         
-        crab.element.classList.toggle("fleeing", fleeing);
+        crab.element.classList.toggle("fleeing", crab.state === 'FLEE');
 
-        if (!fleeing && (distance < 5 || now > crab.nextTargetAt)) {
-          chooseTarget(crab, arena, now);
-        }
-
-        if (distance > 0.001) {
-          const speed = fleeing ? crab.speed * 2.6 : crab.speed;
+        if (distance > 1) {
+          const speed = crab.state === 'FLEE' ? crab.speed * 3 : crab.speed;
           const step = Math.min(distance, speed * dt);
           crab.x += (dx / distance) * step;
           crab.y += (dy / distance) * step;
           crab.element.classList.add("walking");
-          if (Math.abs(dx) > 0.5) crab.facing = dx > 0 ? 1 : -1;
+          if (Math.abs(dx) > 0.5) {
+            crab.facing = dx > 0 ? 1 : -1;
+          }
         } else {
           crab.element.classList.remove("walking");
         }
@@ -1046,58 +1410,105 @@
         crab.x = clamp(crab.x, arena.left, arena.right);
         crab.y = clamp(crab.y, arena.top, arena.bottom);
 
-        if (crab.holding && now >= crab.dropAt) dropItem(crab, arena);
+        const bob = Math.sin(now / 150 + crab.id) * 3;
+        const tilt = crab.state === 'FLEE' ? crab.facing * 12 : Math.sin(now / 200 + crab.id) * 5;
         
-        if (!crab.holding && now >= crab.nextPickupAt) {
-          const candidate = nearestItem(crab, 65);
-          if (candidate && Math.random() > 0.1) pickupItem(crab, candidate, now);
-          crab.nextPickupAt = now + randomBetween(700, 1800);
-        }
-
-        const bob = Math.sin(now / 200 + crab.id) * 2;
-        const tilt = fleeing ? crab.facing * 6 : Math.sin(now / 250 + crab.id) * 1.5;
+        // Di chuyển bằng transform: translate
         crab.element.style.transform = `translate(${crab.x}px, ${crab.y + bob}px) rotate(${tilt}deg) scaleX(${crab.facing * crab.scale}) scaleY(${crab.scale})`;
       };
 
       const reflow = () => {
-        currentArena = bounds(); // Update cache khi resize màn hình
-        createSparkles(currentArena);
+        currentArena = bounds();
+        createBins(); // Cập nhật lại thùng rác theo kích thước mới
         for (const item of items) {
-          if (item.heldBy !== null) continue;
+          if (!item.available) continue;
           item.x = clamp(item.x, currentArena.left, currentArena.right);
           item.y = clamp(item.y, currentArena.top, currentArena.bottom);
           setPoint(item.element, item.x, item.y);
         }
       };
 
+      const createSparkles = (arena) => {
+        sparkleLayer.innerHTML = "";
+        for (let i = 0; i < Math.floor(arena.width / 50); i++) {
+          const el = document.createElement("span"); 
+          el.className = "sparkle";
+          el.style.left = randomBetween(15, arena.width - 15) + "px"; 
+          el.style.top = randomBetween(arena.height * 0.4, arena.height * 0.6) + "px";
+          el.style.animationDelay = (-Math.random() * 4).toFixed(2) + "s";
+          el.style.setProperty('--tx', randomBetween(-30, 30) + "px"); 
+          el.style.setProperty('--ty', randomBetween(-30, 30) + "px"); 
+          el.style.setProperty('--dur', randomBetween(3, 6).toFixed(2) + "s");
+          sparkleLayer.appendChild(el);
+        }
+      };
+
       const start = () => {
-        renderedItemIcons.forEach((icon, index) => createItem(index, icon, currentArena));
+        createBins();
         createSparkles(currentArena);
-        for (let i = 0; i < crabCount; i++) createCrab(i, currentArena);
+        
+        for(let i=0; i<5; i++) {
+          spawnRandomTrash();
+        }
+
+        for (let i = 0; i < crabCount; i++) {
+          createCrab(i, currentArena);
+        }
 
         let previous = performance.now();
         const tick = (now) => {
           const dt = Math.min((now - previous) / 1000, 0.05);
           previous = now;
-          for (const crab of crabs) updateCrab(crab, dt, now, currentArena);
+          
+          for (const crab of crabs) {
+            updateCrabAI(crab, dt, now, currentArena);
+          }
+          
           requestAnimationFrame(tick);
         };
+        
         requestAnimationFrame(tick);
       };
 
-      // Event Listeners
-      if (consoleToggle) consoleToggle.addEventListener("click", openConsole);
-      if (consoleCloseBtn) consoleCloseBtn.addEventListener("click", closeConsole);
-      if (consoleRefreshBtn) consoleRefreshBtn.addEventListener("click", fetchDiagnostics);
-      if (consoleOverlay) {
-        consoleOverlay.addEventListener("click", (e) => { if (e.target === consoleOverlay) closeConsole(); });
+      // ======== GẮN SỰ KIỆN CONSOLE & CHẠY ========
+      if (consoleToggle) {
+        consoleToggle.addEventListener("click", openConsole);
       }
-      document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeConsole(); });
+      
+      if (consoleCloseBtn) {
+        consoleCloseBtn.addEventListener("click", closeConsole);
+      }
+      
+      if (consoleRefreshBtn) {
+        consoleRefreshBtn.addEventListener("click", fetchDiagnostics);
+      }
+      
+      if (consoleOverlay) {
+        consoleOverlay.addEventListener("click", (e) => {
+          if (e.target === consoleOverlay) {
+            closeConsole();
+          }
+        });
+      }
+      
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          closeConsole();
+        }
+      });
 
-      start();
       window.addEventListener("resize", reflow);
+      
+      // Chạy game
+      start();
+      
+      // Chạy fetch server ảo log
       fetchDiagnostics();
       setInterval(fetchDiagnostics, DIAGNOSTIC_POLL_MS);
+
+      // Loop sinh rác ngẫu nhiên
+      setInterval(spawnRandomTrash, 4000);
+
     })();
   </script>
 </body>
