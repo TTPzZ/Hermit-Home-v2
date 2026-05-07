@@ -6,11 +6,10 @@ function parseBooleanFlag(raw: string | undefined, fallback: boolean): boolean {
   return normalized === '1' || normalized === 'true' || normalized === 'yes' || normalized === 'on';
 }
 
-// Temporary safety lock while mist hardware is faulty.
-// Can be overridden by environment for local/integration testing.
+// Safety lock for mist relay. Keep it configurable by env, but default to unlocked.
 export const MIST_SAFETY_LOCK_ENABLED = parseBooleanFlag(
   process.env.AGENT_MIST_SAFETY_LOCK_ENABLED || process.env.MIST_SAFETY_LOCK_ENABLED,
-  true,
+  false,
 );
 
 export function sanitizeRelayMap<T extends Partial<RelayState> | undefined>(relays: T): T {

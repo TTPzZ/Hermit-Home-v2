@@ -26,6 +26,26 @@
   "rewrites": [
     { "source": "/reset-password", "destination": "/api/auth?action=reset-link" },
     { "source": "/reset-password/", "destination": "/api/auth?action=reset-link" },
+    {
+      "source": "/api/devices/:deviceId/status",
+      "destination": "/api/devices/:deviceId/data?type=latest"
+    },
+    {
+      "source": "/api/devices/:deviceId/telemetry",
+      "destination": "/api/devices/:deviceId/data?type=history"
+    },
+    {
+      "source": "/api/devices/:deviceId/control",
+      "destination": "/api/devices/:deviceId/action?type=control"
+    },
+    {
+      "source": "/api/devices/:deviceId/override",
+      "destination": "/api/devices/:deviceId/action?type=override"
+    },
+    {
+      "source": "/api/devices/:deviceId/alerts",
+      "destination": "/api/devices/:deviceId/action?type=alert"
+    },
     { "source": "/api/users/register", "destination": "/api/auth?action=register" },
     { "source": "/api/users/login", "destination": "/api/auth?action=login" },
     { "source": "/api/users/forgot-password", "destination": "/api/auth?action=forgot-password" },
