@@ -68,13 +68,59 @@
       box-shadow: 0 0 40px #ffd15bbb;
     }
 
-    .sun .sun-photo {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-      border-radius: inherit;
-      display: block;
+    .sun::before {
+      content: "";
+      position: absolute;
+      inset: -12px;
+      border-radius: 50%;
+      border: 2px dashed #ffe39a;
+      opacity: 0.9;
+      animation: sun-spin 14s linear infinite;
+    }
+
+    .sun::after {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 25%, #fffad8 0 16%, #0000 20%),
+        radial-gradient(circle at 70% 30%, #fff1b2 0 8%, #0000 12%);
+      opacity: 0.7;
+    }
+
+    .sun-face {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+    }
+
+    .sun-eye {
+      position: absolute;
+      top: 42%;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #8f5e00;
+      z-index: 1;
+    }
+
+    .sun-eye.left {
+      left: 34%;
+    }
+
+    .sun-eye.right {
+      right: 34%;
+    }
+
+    .sun-mouth {
+      position: absolute;
+      top: 54%;
+      width: 32px;
+      height: 18px;
+      border-bottom: 4px solid #a16900;
+      border-radius: 0 0 22px 22px;
+      z-index: 1;
     }
 
     .cloud {
@@ -592,6 +638,12 @@
       transform-origin: center;
       filter: drop-shadow(0 8px 6px #00000022);
       will-change: transform;
+      pointer-events: auto;
+      cursor: pointer;
+    }
+
+    .hermit.fleeing {
+      filter: drop-shadow(0 10px 8px #00000033);
     }
 
     .hermit .shadow {
@@ -828,13 +880,26 @@
         box-shadow: 0 8px 18px #d73b3b99;
       }
     }
+
+    @keyframes sun-spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
   </style>
 </head>
 <body>
   <main class="beach-scene" id="beachScene">
     <div class="sky"></div>
     <div class="sun">
-      <img class="sun-photo" src="/images/p-sun.webp" alt="Portrait sun" />
+      <div class="sun-face" aria-hidden="true">
+        <span class="sun-eye left"></span>
+        <span class="sun-eye right"></span>
+        <span class="sun-mouth"></span>
+      </div>
     </div>
     <div class="cloud one"></div>
     <div class="cloud two"></div>
@@ -1106,6 +1171,22 @@
         element.style.top = y + "px";
       };
 
+      const fleeFromPoint = (crab, clientX, clientY, now, arena) => {
+        const sceneRect = beachScene.getBoundingClientRect();
+        const sourceX = clientX - sceneRect.left;
+        const sourceY = clientY - sceneRect.top;
+        const vx = crab.x - sourceX;
+        const vy = crab.y - sourceY;
+        const magnitude = Math.hypot(vx, vy) || 1;
+        const fleeDistance = randomBetween(130, 240);
+
+        crab.targetX = clamp(crab.x + (vx / magnitude) * fleeDistance, arena.left, arena.right);
+        crab.targetY = clamp(crab.y + (vy / magnitude) * fleeDistance, arena.top, arena.bottom);
+        crab.fleeUntil = now + randomBetween(900, 1700);
+        crab.nextTargetAt = crab.fleeUntil + randomBetween(500, 1200);
+        crab.nextPickupAt = crab.fleeUntil + randomBetween(900, 2000);
+      };
+
       const chooseTarget = (crab, arena, now) => {
         crab.targetX = randomBetween(arena.left, arena.right);
         crab.targetY = randomBetween(arena.top, arena.bottom);
@@ -1159,9 +1240,16 @@
           facing: Math.random() > 0.5 ? 1 : -1,
           holding: null,
           dropAt: 0,
+          fleeUntil: 0,
           nextTargetAt: now + randomBetween(500, 1400),
           nextPickupAt: now + randomBetween(800, 1600)
         };
+        element.title = "Tap me";
+        element.addEventListener("pointerdown", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          fleeFromPoint(crab, event.clientX, event.clientY, performance.now(), bounds());
+        });
         crabs.push(crab);
       };
 
@@ -1216,13 +1304,16 @@
         const dx = crab.targetX - crab.x;
         const dy = crab.targetY - crab.y;
         const distance = Math.hypot(dx, dy);
+        const fleeing = now < crab.fleeUntil;
+        crab.element.classList.toggle("fleeing", fleeing);
 
-        if (distance < 7 || now > crab.nextTargetAt) {
+        if (!fleeing && (distance < 7 || now > crab.nextTargetAt)) {
           chooseTarget(crab, arena, now);
         }
 
         if (distance > 0.001) {
-          const step = Math.min(distance, crab.speed * dt);
+          const speed = fleeing ? crab.speed * 2.8 : crab.speed;
+          const step = Math.min(distance, speed * dt);
           crab.x += (dx / distance) * step;
           crab.y += (dy / distance) * step;
           crab.element.classList.add("walking");
