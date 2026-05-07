@@ -8,12 +8,15 @@
     @import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&display=swap");
 
     :root {
-      --sky-top: #7edaff;
-      --sky-bottom: #ffdca5;
-      --sea-deep: #0f6ca8;
-      --sea-light: #5ed4ff;
-      --sand-main: #f7cc85;
-      --sand-dark: #dfaa66;
+      --sky-top: #62c9f2;
+      --sky-mid: #8fdfff;
+      --sky-bottom: #ffd39a;
+      --sea-deep: #0f5e93;
+      --sea-mid: #1f8fca;
+      --sea-light: #6cdcff;
+      --sand-main: #efc27b;
+      --sand-wet: #d9a05f;
+      --sand-dark: #ba7f49;
       --palm-trunk: #905532;
       --palm-leaf: #2f9d53;
       --sun: #ffd15b;
@@ -47,12 +50,36 @@
       min-height: 620px;
       overflow: hidden;
       isolation: isolate;
+      animation: camera-breathe 10s ease-in-out infinite;
     }
 
     .sky {
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, var(--sky-top) 0%, #9ce8ff 35%, var(--sky-bottom) 58%);
+      background:
+        radial-gradient(circle at 78% 12%, #fff4c280 0 12%, #0000 24%),
+        linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 36%, var(--sky-bottom) 62%);
+    }
+
+    .sky::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 12% 24%, #ffffff66 0 6%, #0000 24%),
+        radial-gradient(circle at 85% 34%, #ffffff44 0 5%, #0000 18%);
+      mix-blend-mode: screen;
+      opacity: 0.65;
+      animation: haze-drift 22s linear infinite;
+    }
+
+    .sky::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, #0000 0%, #ffffff22 45%, #ffffff40 60%, #0000 82%);
+      opacity: 0.55;
+      pointer-events: none;
     }
 
     .sun {
@@ -65,7 +92,8 @@
       background: radial-gradient(circle at 35% 30%, #fff7cb 0 25%, var(--sun) 45%, #ffb935 100%);
       border: 3px solid #ffe7aa;
       overflow: hidden;
-      box-shadow: 0 0 40px #ffd15bbb;
+      box-shadow: 0 0 46px #ffd15bbb;
+      animation: sun-pulse 4s ease-in-out infinite;
     }
 
     .sun::before {
@@ -128,9 +156,10 @@
       width: clamp(120px, 18vw, 220px);
       height: clamp(44px, 6vw, 78px);
       border-radius: 999px;
-      background: #f4fbffdd;
-      filter: blur(0.2px);
+      background: #f4fbffdb;
+      filter: blur(0.5px);
       animation: cloud-drift linear infinite;
+      box-shadow: 0 10px 20px #7dc6eb24;
     }
 
     .cloud::before,
@@ -183,7 +212,9 @@
       left: -3%;
       width: 106%;
       height: 21%;
-      background: linear-gradient(180deg, var(--sea-light) 0%, #1f9fd4 45%, var(--sea-deep) 100%);
+      background:
+        linear-gradient(180deg, #8ce6ff66 0 8%, #0000 16%),
+        linear-gradient(180deg, var(--sea-light) 0%, var(--sea-mid) 46%, var(--sea-deep) 100%);
       border-top: 3px solid #a9f4ff;
       overflow: hidden;
     }
@@ -211,13 +242,26 @@
       animation: wave-shift 8s linear infinite reverse;
     }
 
+    .horizon-haze {
+      position: absolute;
+      top: 39%;
+      left: -5%;
+      width: 110%;
+      height: 8%;
+      background: linear-gradient(180deg, #b8ecff66 0%, #d7f6ff55 45%, #0000 100%);
+      filter: blur(2px);
+      pointer-events: none;
+      z-index: 1;
+    }
+
     .sand {
       position: absolute;
       top: 60%;
       left: 0;
       right: 0;
       bottom: 0;
-      background: linear-gradient(180deg, #fcd88f 0%, var(--sand-main) 45%, var(--sand-dark) 100%);
+      background:
+        linear-gradient(180deg, #f7d998 0%, var(--sand-main) 42%, var(--sand-wet) 72%, var(--sand-dark) 100%);
     }
 
     .sand::before {
@@ -231,6 +275,20 @@
       opacity: 0.45;
     }
 
+    .sand::after {
+      content: "";
+      position: absolute;
+      top: -20px;
+      left: -5%;
+      width: 110%;
+      height: 30px;
+      background:
+        radial-gradient(circle at 16px 4px, #ffffffd0 0 12px, #0000 13px);
+      background-size: 54px 20px;
+      opacity: 0.64;
+      animation: shore-foam 6s linear infinite;
+    }
+
     .title-card {
       position: absolute;
       top: clamp(14px, 3vw, 24px);
@@ -238,9 +296,10 @@
       z-index: 3;
       padding: 10px 16px;
       border-radius: 16px;
-      background: linear-gradient(135deg, #ffffffd8 0%, #f8ffffc7 100%);
-      backdrop-filter: blur(2px);
-      box-shadow: 0 10px 26px #1c5c7a1a;
+      background: linear-gradient(135deg, #ffffffdf 0%, #f8ffffd6 100%);
+      backdrop-filter: blur(3px);
+      border: 1px solid #ffffff99;
+      box-shadow: 0 10px 26px #1c5c7a24;
     }
 
     .title-card h1 {
@@ -460,10 +519,71 @@
 
     .decor-layer,
     .item-layer,
-    .crab-layer {
+    .crab-layer,
+    .sparkle-layer {
       position: absolute;
       inset: 0;
       pointer-events: none;
+    }
+
+    .sparkle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #ffffffdf;
+      box-shadow: 0 0 10px #ffffffcc;
+      opacity: 0.7;
+      animation: sparkle-flicker 2.6s ease-in-out infinite;
+    }
+
+    .bird {
+      position: absolute;
+      top: 16%;
+      width: 26px;
+      height: 12px;
+      pointer-events: none;
+      animation: bird-fly linear infinite;
+      z-index: 2;
+    }
+
+    .bird::before,
+    .bird::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      width: 14px;
+      height: 9px;
+      border-top: 3px solid #2b5b76;
+      border-radius: 100% 100% 0 0;
+      transform-origin: center bottom;
+      animation: bird-wing 0.7s ease-in-out infinite;
+    }
+
+    .bird::before {
+      left: 0;
+      transform: rotate(15deg);
+    }
+
+    .bird::after {
+      right: 0;
+      transform: rotate(-15deg);
+      animation-delay: -0.35s;
+    }
+
+    .bird.one {
+      left: -40px;
+      top: 14%;
+      animation-duration: 30s;
+    }
+
+    .bird.two {
+      left: -60px;
+      top: 20%;
+      scale: 0.8;
+      opacity: 0.75;
+      animation-duration: 36s;
+      animation-delay: -8s;
     }
 
     .palm {
@@ -631,6 +751,7 @@
     }
 
     .hermit {
+      --stride: 0.22s;
       position: absolute;
       width: 80px;
       height: 56px;
@@ -640,6 +761,7 @@
       will-change: transform;
       pointer-events: auto;
       cursor: pointer;
+      transition: filter 0.16s ease;
     }
 
     .hermit.fleeing {
@@ -770,7 +892,7 @@
     }
 
     .hermit.walking .legs {
-      animation: leg-trot 0.22s steps(2, end) infinite;
+      animation: leg-trot var(--stride) steps(2, end) infinite;
     }
 
     .hermit.walking .shell {
@@ -889,11 +1011,82 @@
         transform: rotate(360deg);
       }
     }
+
+    @keyframes sun-pulse {
+      0%,
+      100% {
+        box-shadow: 0 0 42px #ffd15bbb;
+      }
+      50% {
+        box-shadow: 0 0 62px #ffd46de8;
+      }
+    }
+
+    @keyframes haze-drift {
+      from {
+        transform: translateX(-20px);
+      }
+      to {
+        transform: translateX(20px);
+      }
+    }
+
+    @keyframes shore-foam {
+      from {
+        background-position-x: 0;
+      }
+      to {
+        background-position-x: 180px;
+      }
+    }
+
+    @keyframes sparkle-flicker {
+      0%,
+      100% {
+        opacity: 0.16;
+        transform: scale(0.85);
+      }
+      50% {
+        opacity: 0.95;
+        transform: scale(1.25);
+      }
+    }
+
+    @keyframes bird-fly {
+      from {
+        transform: translateX(0);
+      }
+      to {
+        transform: translateX(120vw);
+      }
+    }
+
+    @keyframes bird-wing {
+      0%,
+      100% {
+        transform: rotate(16deg);
+      }
+      50% {
+        transform: rotate(-4deg);
+      }
+    }
+
+    @keyframes camera-breathe {
+      0%,
+      100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.007);
+      }
+    }
   </style>
 </head>
 <body>
   <main class="beach-scene" id="beachScene">
     <div class="sky"></div>
+    <div class="bird one" aria-hidden="true"></div>
+    <div class="bird two" aria-hidden="true"></div>
     <div class="sun">
       <div class="sun-face" aria-hidden="true">
         <span class="sun-eye left"></span>
@@ -904,6 +1097,7 @@
     <div class="cloud one"></div>
     <div class="cloud two"></div>
     <div class="cloud three"></div>
+    <div class="horizon-haze"></div>
     <div class="sea"></div>
     <div class="sand"></div>
 
@@ -918,7 +1112,7 @@
           title="Live Diagnostic Console"
         >&#x2328;</button>
       </div>
-      <p>5 playful hermits roaming the sand.</p>
+      <p>Tap a crab and watch it sprint away.</p>
     </section>
 
     <div class="decor-layer">
@@ -941,6 +1135,7 @@
     </div>
 
     <div class="item-layer" id="itemLayer"></div>
+    <div class="sparkle-layer" id="sparkleLayer"></div>
     <div class="crab-layer" id="crabLayer"></div>
   </main>
 
@@ -965,10 +1160,14 @@
   <script>
     (function () {
       const crabCount = 5;
+      const renderedItemIcons = ["🐚", "⭐", "🪣", "🩴", "🥥", "🍍", "🧴", "🎾"];
+      const SEA_TOP_RATIO = 0.42;
+      const SAND_TOP_RATIO = 0.60;
       const itemIcons = ["🐚", "⭐", "🪣", "🩴", "🥥", "🍍", "🧴", "🎾"];
 
       const beachScene = document.getElementById("beachScene");
       const itemLayer = document.getElementById("itemLayer");
+      const sparkleLayer = document.getElementById("sparkleLayer");
       const crabLayer = document.getElementById("crabLayer");
       const consoleToggle = document.getElementById("consoleToggle");
       const consoleOverlay = document.getElementById("consoleOverlay");
@@ -979,6 +1178,7 @@
       const consoleEmpty = document.getElementById("consoleEmpty");
 
       const items = [];
+      const sparkles = [];
       const crabs = [];
       const DIAGNOSTIC_POLL_MS = 4000;
       let diagnosticsOnline = false;
@@ -1155,7 +1355,7 @@
       const bounds = () => {
         const width = beachScene.clientWidth;
         const height = beachScene.clientHeight;
-        const sandTop = height * 0.6;
+        const sandTop = height * SAND_TOP_RATIO;
         return {
           width,
           height,
@@ -1164,6 +1364,37 @@
           top: sandTop + 16,
           bottom: height - 72
         };
+      };
+
+      const createSparkles = (arena) => {
+        if (!sparkleLayer) {
+          return;
+        }
+
+        sparkleLayer.innerHTML = "";
+        sparkles.length = 0;
+        const count = Math.max(26, Math.floor(arena.width / 34));
+        const seaTop = arena.height * SEA_TOP_RATIO;
+        const seaBottom = arena.height * SAND_TOP_RATIO;
+
+        for (let index = 0; index < count; index += 1) {
+          const element = document.createElement("span");
+          element.className = "sparkle";
+          const x = randomBetween(14, arena.width - 14);
+          const y = randomBetween(seaTop + 8, seaBottom - 10);
+          element.style.left = x + "px";
+          element.style.top = y + "px";
+          element.style.animationDelay = (-Math.random() * 3).toFixed(2) + "s";
+          sparkleLayer.appendChild(element);
+
+          sparkles.push({
+            element,
+            sway: randomBetween(2, 8),
+            lift: randomBetween(1.2, 3.4),
+            speed: randomBetween(0.7, 1.8),
+            phase: randomBetween(0, Math.PI * 2)
+          });
+        }
       };
 
       const setPoint = (element, x, y) => {
@@ -1228,6 +1459,7 @@
         crabLayer.appendChild(element);
 
         const now = performance.now();
+        const scale = randomBetween(0.88, 1.15);
         const crab = {
           id,
           element,
@@ -1237,6 +1469,7 @@
           targetX: randomBetween(arena.left, arena.right),
           targetY: randomBetween(arena.top, arena.bottom),
           speed: randomBetween(26, 52),
+          scale,
           facing: Math.random() > 0.5 ? 1 : -1,
           holding: null,
           dropAt: 0,
@@ -1244,6 +1477,8 @@
           nextTargetAt: now + randomBetween(500, 1400),
           nextPickupAt: now + randomBetween(800, 1600)
         };
+        crab.element.style.setProperty("--stride", randomBetween(0.16, 0.28).toFixed(2) + "s");
+        crab.element.style.opacity = (0.86 + Math.random() * 0.14).toFixed(2);
         element.title = "Tap me";
         element.addEventListener("pointerdown", (event) => {
           event.preventDefault();
@@ -1340,12 +1575,22 @@
         }
 
         const bob = Math.sin(now / 220 + crab.id * 2.1) * 2.1;
+        const tilt = fleeing ? crab.facing * 5 : Math.sin(now / 280 + crab.id) * 2;
         crab.element.style.transform =
-          "translate(" + crab.x + "px," + (crab.y + bob) + "px) scaleX(" + crab.facing + ")";
+          "translate(" + crab.x + "px," + (crab.y + bob) + "px) rotate(" + tilt + "deg) scaleX(" + (crab.facing * crab.scale) + ") scaleY(" + crab.scale + ")";
+      };
+
+      const updateSparkles = (now) => {
+        for (const sparkle of sparkles) {
+          const xOffset = Math.sin(now / 980 * sparkle.speed + sparkle.phase) * sparkle.sway;
+          const yOffset = Math.cos(now / 760 * sparkle.speed + sparkle.phase) * sparkle.lift;
+          sparkle.element.style.transform = "translate(" + xOffset.toFixed(2) + "px," + yOffset.toFixed(2) + "px)";
+        }
       };
 
       const reflow = () => {
         const arena = bounds();
+        createSparkles(arena);
         for (const item of items) {
           if (item.heldBy !== null) {
             continue;
@@ -1364,7 +1609,8 @@
 
       const start = () => {
         const arena = bounds();
-        itemIcons.forEach((icon, index) => createItem(index, icon, arena));
+        renderedItemIcons.forEach((icon, index) => createItem(index, icon, arena));
+        createSparkles(arena);
         for (let index = 0; index < crabCount; index += 1) {
           createCrab(index, arena);
         }
@@ -1377,6 +1623,7 @@
           for (const crab of crabs) {
             updateCrab(crab, dt, now, nextArena);
           }
+          updateSparkles(now);
           requestAnimationFrame(tick);
         };
         requestAnimationFrame(tick);
