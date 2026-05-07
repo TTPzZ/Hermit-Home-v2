@@ -79,6 +79,14 @@
       "dest": "/services/api/api/agent/control/cycle.ts"
     },
     {
+      "src": "/api/emqx/telemetry",
+      "dest": "/services/api/api/emqx/telemetry.ts"
+    },
+    {
+      "src": "/api/emqx/confirm",
+      "dest": "/services/api/api/emqx/confirm.ts"
+    },
+    {
       "src": "/api/devices/([^/]+)/data",
       "dest": "/services/api/api/devices/[deviceId]/data.ts?deviceId=$1"
     },

@@ -178,3 +178,70 @@ export async function listDiagnosticLogs(params: {
 
   return collection.find(filter).sort({ createdAt: -1 }).limit(safeLimit).toArray();
 }
+
+export async function acknowledgePendingCommand(params: {
+  deviceId: string;
+  relay: string;
+  acknowledgedState: boolean;
+  source?: DiagnosticSource;
+  metadata?: Record<string, unknown>;
+}): Promise<boolean> {
+  if (!isDeviceKey(params.relay)) {
+    return false;
+  }
+
+  const { db } = await connectToDatabase();
+  const now = new Date();
+  const relay = params.relay;
+  const source = params.source ?? 'system';
+  const collection = db.collection<DiagnosticLogDocument>(COLLECTION_NAME);
+
+  const pending = await collection.findOne(
+    {
+      deviceId: params.deviceId,
+      status: 'PENDING',
+      relay,
+      expectedState: params.acknowledgedState,
+    },
+    { sort: { createdAt: -1 } },
+  );
+
+  if (!pending?._id) {
+    await insertDiagnosticLog({
+      deviceId: params.deviceId,
+      userId: null,
+      source,
+      category: 'ACK',
+      status: 'INFO',
+      message: `[INFO] Edge acknowledgment received without a matching pending command (${relayLabel(relay)}=${stateLabel(params.acknowledgedState)}).`,
+      relay,
+      acknowledgedState: params.acknowledgedState,
+      metadata: {
+        unmatchedAck: true,
+        ...(params.metadata || {}),
+      },
+    });
+    return false;
+  }
+
+  await collection.updateOne(
+    { _id: pending._id, status: 'PENDING' },
+    {
+      $set: {
+        source,
+        category: 'ACK',
+        status: 'PASS',
+        message: `[PASS] Command (${relayLabel(relay)}=${stateLabel(params.acknowledgedState)}) acknowledged by Edge Device.`,
+        acknowledgedState: params.acknowledgedState,
+        acknowledgedAt: now,
+        acknowledgedAtVn: toVietnamDateTime(now),
+        resolvedAt: now,
+        resolvedAtVn: toVietnamDateTime(now),
+        updatedAt: now,
+        updatedAtVn: toVietnamDateTime(now),
+      },
+    },
+  );
+
+  return true;
+}
